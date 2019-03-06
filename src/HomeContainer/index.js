@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon } from '@material-ui/icons';
+import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
 
 const drawerWidth = 240
 
 const styles = theme => ({
   root: {
     display: 'flex'
+  },
+  grow: {
+    flexGrow: 1
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1
@@ -24,6 +27,11 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3
   },
   toolbar: theme.mixins.toolbar
+    // toolbar: {
+    //   minHeight: '64px',
+    //   alignItems: 'center',
+    //   justifyContent: 'space-between'
+    // }
 })
 
 class HomeContainer extends Component {
@@ -38,9 +46,18 @@ class HomeContainer extends Component {
         <CssBaseline />
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <Typography variant="h6" color="inherit" noWrap>
-              Schedulest
+            <Typography variant="h5" color="inherit" noWrap>
+              Schedulest | Company X
             </Typography>
+            <div className={classes.grow}></div>
+            <div>
+              <IconButton>
+                <SettingsIcon color="inherit"/>
+              </IconButton>
+              <IconButton>
+                <PersonIcon color="inherit"/>
+              </IconButton>
+            </div>
           </Toolbar>
         </AppBar>
         <Drawer className={classes.drawer} variant="permanent" 
