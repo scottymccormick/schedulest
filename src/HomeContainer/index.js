@@ -32,14 +32,10 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3
   },
   routerLink: {
-    textDecoration: 'none'
+    textDecoration: 'none',
+    color: 'inherit'
   },
   toolbar: theme.mixins.toolbar
-    // toolbar: {
-    //   minHeight: '64px',
-    //   alignItems: 'center',
-    //   justifyContent: 'space-between'
-    // }
 })
 
 const sidebarNavs = [
@@ -69,9 +65,11 @@ class HomeContainer extends Component {
         <CssBaseline />
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <Typography variant="h5" color="inherit" noWrap>
-              Schedulest | Company X
-            </Typography>
+            <RouterLink to="/" className={classes.routerLink}>
+              <Typography variant="h5" color="inherit" noWrap>
+                Schedulest | Company X
+              </Typography>
+            </RouterLink>
             <div className={classes.grow}></div>
             <div>
               <IconButton>
