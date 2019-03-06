@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { MoveToInbox as InboxIcon } from '@material-ui/icons';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon } from '@material-ui/icons';
 
 const drawerWidth = 240
 
@@ -52,7 +52,7 @@ class HomeContainer extends Component {
           <List>
             {['Reservations', 'Locations', 'Users'].map((text, index) => (
               <ListItem button key={text}>
-                <ListItemIcon><InboxIcon/></ListItemIcon>
+                <ListItemIcon>{index === 0 ? <EventIcon /> : index === 1 ? <RoomIcon /> : <PeopleIcon/>}</ListItemIcon>
                 <ListItemText primary={text}/>
               </ListItem>
             ))}
