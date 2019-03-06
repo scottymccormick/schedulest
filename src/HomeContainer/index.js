@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Route, Link as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
 import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
+import UsersContainer from '../UsersContainer';
+import ResContainer from '../ResContainer';
+import LandingContainer from '../LandingContainer';
+import LocationsContainer from '../LocationsContainer';
 
 const drawerWidth = 240
 
@@ -26,6 +31,9 @@ const styles = theme => ({
     flexGrow: 1,
     padding: theme.spacing.unit * 3
   },
+  routerLink: {
+    textDecoration: 'none'
+  },
   toolbar: theme.mixins.toolbar
     // toolbar: {
     //   minHeight: '64px',
@@ -33,6 +41,21 @@ const styles = theme => ({
     //   justifyContent: 'space-between'
     // }
 })
+
+const sidebarNavs = [
+  {
+    text: "Reservations",
+    path: "/bookings"
+  },
+  {
+    text: "Locations",
+    path: "/locations"
+  },
+  {
+    text: "Users",
+    path: "/users"
+  }
+]
 
 class HomeContainer extends Component {
   // constructor(props) {
@@ -67,19 +90,22 @@ class HomeContainer extends Component {
         >
           <div className={classes.toolbar} />
           <List>
-            {['Reservations', 'Locations', 'Users'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index === 0 ? <EventIcon /> : index === 1 ? <RoomIcon /> : <PeopleIcon/>}</ListItemIcon>
-                <ListItemText primary={text}/>
-              </ListItem>
+            {sidebarNavs.map(({text, path}, index) => (
+              <RouterLink className={classes.routerLink} to={path} key={text}>
+                <ListItem button >
+                  <ListItemIcon>{index === 0 ? <EventIcon /> : index === 1 ? <RoomIcon /> : <PeopleIcon/>}</ListItemIcon>
+                  <ListItemText primary={text}/>
+                </ListItem>
+              </RouterLink>
             ))}
           </List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Typography paragraph>
-            Test Content
-          </Typography>
+          <Route exact path="/users" component={UsersContainer} />
+          <Route exact path="/bookings" component={ResContainer} />
+          <Route exact path="/locations" component={LocationsContainer} />
+          <Route exact path="/" component={LandingContainer} />
         </main>
       </div>
     )
