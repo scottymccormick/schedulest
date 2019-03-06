@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar } from '@material-ui/core';
+import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { MoveToInbox as InboxIcon } from '@material-ui/icons';
 
 const drawerWidth = 240
 
@@ -35,16 +36,34 @@ class HomeContainer extends Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed">
+        <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.appBar}>
+            <Typography variant="h6" color="inherit" noWrap>
               Schedulest
             </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer>
-
+        <Drawer className={classes.drawer} variant="permanent" 
+          classes={{
+            paper: classes.drawerPaper
+          }}
+        >
+          <div className={classes.toolbar} />
+          <List>
+            {['Reservations', 'Locations', 'Users'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon><InboxIcon/></ListItemIcon>
+                <ListItemText primary={text}/>
+              </ListItem>
+            ))}
+          </List>
         </Drawer>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          <Typography paragraph>
+            Test Content
+          </Typography>
+        </main>
       </div>
     )
   }
