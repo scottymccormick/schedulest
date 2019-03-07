@@ -35,7 +35,7 @@ const styles = theme => ({
     textDecoration: 'none',
     color: 'inherit'
   },
-  toolbar: theme.mixins.toolbar
+  toolbarSpacer: theme.mixins.toolbar
 })
 
 const sidebarNavs = [
@@ -86,7 +86,7 @@ class HomeContainer extends Component {
             paper: classes.drawerPaper
           }}
         >
-          <div className={classes.toolbar} />
+          <div className={classes.toolbarSpacer} />
           <List>
             {sidebarNavs.map(({text, path}, index) => (
               <RouterLink className={classes.routerLink} to={path} key={text}>
@@ -99,7 +99,7 @@ class HomeContainer extends Component {
           </List>
         </Drawer>
         <main className={classes.content}>
-          <div className={classes.toolbar} />
+          {/* <div className={classes.toolbarSpacer} /> */}
           <Route exact path="/users" component={UsersContainer} />
           <Route exact path="/bookings" component={ResContainer} />
           <Route exact path="/locations" component={LocationsContainer} />
