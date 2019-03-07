@@ -27,59 +27,60 @@ const styles = theme => ({
     position: 'relative',
     marginBottom: theme.spacing.unit * 3
   },
+  headerButton: {
+    top: 0,
+    left: 0,
+    position: 'absolute',
+    zIndex: 10
+  },
   calendar: {
-    height: '70vh'
+    height: '70vh',
+    width: '100%'
   }
 });
 
 const events = [
   {
     id: 0,
-    title: 'Board meeting',
-    start: new Date(2018, 0, 29, 9, 0, 0),
-    end: new Date(2018, 0, 29, 13, 0, 0),
+    title: 'Trombone lesson',
+    start: new Date(2019, 2, 7, 9, 0, 0),
+    end: new Date(2019, 2, 7, 11, 0, 0),
     resourceId: 1,
   },
   {
     id: 1,
-    title: 'MS training',
+    title: 'Band practice',
     allDay: true,
-    start: new Date(2018, 0, 29, 14, 0, 0),
-    end: new Date(2018, 0, 29, 16, 30, 0),
+    start: new Date(2019, 2, 8, 14, 0, 0),
+    end: new Date(2019, 2, 8, 15, 0, 0),
     resourceId: 2,
-  },
-  {
-    id: 2,
-    title: 'Team lead meeting',
-    start: new Date(2018, 0, 29, 8, 30, 0),
-    end: new Date(2018, 0, 29, 12, 30, 0),
-    resourceId: 3,
-  },
-  {
-    id: 11,
-    title: 'Birthday Party',
-    start: new Date(2018, 0, 30, 7, 0, 0),
-    end: new Date(2018, 0, 30, 10, 30, 0),
-    resourceId: 4,
-  },
-]
-
-const resourceMap = [
-  { resourceId: 1, resourceTitle: 'Board room' },
-  { resourceId: 2, resourceTitle: 'Training room' },
-  { resourceId: 3, resourceTitle: 'Meeting room 1' },
-  { resourceId: 4, resourceTitle: 'Meeting room 2' },
+  }
 ]
 
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
+// Create different calendars
+// Day views with resource mapping
+// Week view for single resource
+// Need to be able to view 
+
 class ResContainer extends Component {
+  state = {
+    showCalendar: false
+  }
+  toggleCalendar = () => {
+    this.setState({ showCalendar: !this.state.showCalendar})
+  }
   render() {
     const { classes } = this.props
-
+    console.log(this.state)
     return (
       <main>
         <div className={classes.headerDiv}>
+          {this.state.showCalendar ? 
+            <Button variant="contained" color="default" className={classes.headerButton} onClick={this.toggleCalendar} >Hide Calendar</Button> : 
+            <Button variant="contained" color="default" className={classes.headerButton} onClick={this.toggleCalendar} >Show Calendar</Button> 
+          }
           <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
@@ -89,13 +90,18 @@ class ResContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
-          <BigCalendar
-            className={classes.calendar}
-            localizer={localizer}
-            events={events}
-            defaultDate={new Date(2018, 0, 29)}
-            startAccessor="start"
-            endAccessor="end" />
+          {this.state.showCalendar ?
+            <div>
+              <BigCalendar
+              events={events}
+              views={allViews}
+              step={60}
+              showMultiDayTimes
+              defaultDate={new Date()}
+              localizer={localizer}
+              className={classes.calendar} /> 
+            </div> : null
+          }
         </Paper>
       </main>
     )
