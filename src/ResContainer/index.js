@@ -22,7 +22,37 @@ const styles = theme => ({
     position: 'relative',
     marginBottom: theme.spacing.unit * 3
   }
-})
+});
+
+// const timelineGroups = [
+//   { id: 1, title: 'Room 1'}, 
+//   { id: 2, title: 'Room 2'}, 
+//   { id: 3, title: 'Room 3'}
+// ]
+
+// const timelineItems = [
+//   {
+//     id: 1,
+//     group: 1, 
+//     title: 'Booking 1',
+//     start_time: moment(),
+//     end_time: moment().add(1, 'hour')
+//   },
+//   {
+//     id: 2,
+//     group: 2, 
+//     title: 'Booking 2',
+//     start_time: moment().add(-0.5, 'hour'),
+//     end_time: moment().add(0.5, 'hour')
+//   },
+//   {
+//     id: 3,
+//     group: 1, 
+//     title: 'Booking 3',
+//     start_time: moment().add(2, 'hour'),
+//     end_time: moment().add(3, 'hour')
+//   }
+// ]
 
 class ResContainer extends Component {
   render() {
@@ -39,6 +69,8 @@ class ResContainer extends Component {
             <Typography variant="button">  Create Booking</Typography>
           </Fab>
         </div>
+        <Paper className={classes.paperArea}>
+        </Paper>
       </main>
     )
   }
