@@ -1,11 +1,43 @@
 import React, { Component } from 'react'
+import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
+import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  paperArea: {
+    padding: theme.spacing.unit * 2
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  fab: {
+    top: -1 * theme.spacing.unit,
+    right: 0,
+    position: 'absolute'
+  },
+  addIcon: {
+    marginRight: theme.spacing.unit
+  },
+  headerDiv:  {
+    position: 'relative',
+    marginBottom: theme.spacing.unit * 3
+  }
+})
 
 class ResContainer extends Component {
   render() {
+    const { classes } = this.props
+
     return (
-      <div>Bookings Container</div>
+      <main>
+        <div className={classes.headerDiv}>
+          <Typography variant="h4" gutterBottom component="h2">
+            Bookings
+          </Typography>
+        </div>
+      </main>
     )
   }
 }
 
-export default ResContainer
+export default withStyles(styles)(ResContainer)
