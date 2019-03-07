@@ -31,9 +31,13 @@ class ResContainer extends Component {
     return (
       <main>
         <div className={classes.headerDiv}>
-          <Typography variant="h4" gutterBottom component="h2">
+          <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
+          <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab}>
+            <AddIcon />
+            <Typography variant="button">  Create Booking</Typography>
+          </Fab>
         </div>
       </main>
     )
