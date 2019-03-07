@@ -13,7 +13,10 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3
   },
   buttonDiv: {
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing.unit * 2,
+    display: 'flex',
+    justifyContent: 'space-around',
+    size: 'large'
   }
 })
 
@@ -35,7 +38,9 @@ class LandingContainer extends Component{
           Quick Links
         </Typography>
         <Paper className={classes.buttonDiv}>
-          <Button color="inherit">Test Button</Button>
+          <Button size="large" variant="contained" color="primary">Create Booking</Button>
+          <Button size="large" variant="contained" color="secondary">Print Reports</Button>
+          <Button size="large" variant="contained" color="inherit">View Schedule</Button>
         </Paper>
       </main>
     )
