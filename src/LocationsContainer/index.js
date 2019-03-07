@@ -11,7 +11,7 @@ const styles = theme => ({
     margin: theme.spacing.unit,
   },
   fab: {
-    top: -1 * theme.spacing.unit,
+    top: 0,
     right: 0,
     position: 'absolute'
   },
@@ -67,7 +67,7 @@ class LocationsContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2">
             Locations
           </Typography>
-          <Fab color="primary" aria-label="Add Location" className={classes.fab}>
+          <Fab color="primary" size="medium" aria-label="Add Location" className={classes.fab}>
             <AddIcon />
           </Fab>
         </div>
