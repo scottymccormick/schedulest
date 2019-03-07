@@ -2,6 +2,11 @@ import React, { Component } from 'react'
 import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
 import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
+import BigCalendar from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css'
+import moment from 'moment';
+
+const localizer = BigCalendar.momentLocalizer(moment);
 
 const styles = theme => ({
   paperArea: {
@@ -21,38 +26,52 @@ const styles = theme => ({
   headerDiv:  {
     position: 'relative',
     marginBottom: theme.spacing.unit * 3
+  },
+  calendar: {
+    height: '70vh'
   }
 });
 
-// const timelineGroups = [
-//   { id: 1, title: 'Room 1'}, 
-//   { id: 2, title: 'Room 2'}, 
-//   { id: 3, title: 'Room 3'}
-// ]
+const events = [
+  {
+    id: 0,
+    title: 'Board meeting',
+    start: new Date(2018, 0, 29, 9, 0, 0),
+    end: new Date(2018, 0, 29, 13, 0, 0),
+    resourceId: 1,
+  },
+  {
+    id: 1,
+    title: 'MS training',
+    allDay: true,
+    start: new Date(2018, 0, 29, 14, 0, 0),
+    end: new Date(2018, 0, 29, 16, 30, 0),
+    resourceId: 2,
+  },
+  {
+    id: 2,
+    title: 'Team lead meeting',
+    start: new Date(2018, 0, 29, 8, 30, 0),
+    end: new Date(2018, 0, 29, 12, 30, 0),
+    resourceId: 3,
+  },
+  {
+    id: 11,
+    title: 'Birthday Party',
+    start: new Date(2018, 0, 30, 7, 0, 0),
+    end: new Date(2018, 0, 30, 10, 30, 0),
+    resourceId: 4,
+  },
+]
 
-// const timelineItems = [
-//   {
-//     id: 1,
-//     group: 1, 
-//     title: 'Booking 1',
-//     start_time: moment(),
-//     end_time: moment().add(1, 'hour')
-//   },
-//   {
-//     id: 2,
-//     group: 2, 
-//     title: 'Booking 2',
-//     start_time: moment().add(-0.5, 'hour'),
-//     end_time: moment().add(0.5, 'hour')
-//   },
-//   {
-//     id: 3,
-//     group: 1, 
-//     title: 'Booking 3',
-//     start_time: moment().add(2, 'hour'),
-//     end_time: moment().add(3, 'hour')
-//   }
-// ]
+const resourceMap = [
+  { resourceId: 1, resourceTitle: 'Board room' },
+  { resourceId: 2, resourceTitle: 'Training room' },
+  { resourceId: 3, resourceTitle: 'Meeting room 1' },
+  { resourceId: 4, resourceTitle: 'Meeting room 2' },
+]
+
+let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 class ResContainer extends Component {
   render() {
@@ -70,6 +89,13 @@ class ResContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
+          <BigCalendar
+            className={classes.calendar}
+            localizer={localizer}
+            events={events}
+            defaultDate={new Date(2018, 0, 29)}
+            startAccessor="start"
+            endAccessor="end" />
         </Paper>
       </main>
     )
