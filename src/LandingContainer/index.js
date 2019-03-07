@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Paper, Grid, Button } from '@material-ui/core';
+import { Typography, Paper, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
