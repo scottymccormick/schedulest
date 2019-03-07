@@ -43,7 +43,7 @@ const styles = theme => ({
 
 const sidebarNavs = [
   {
-    text: "Reservations",
+    text: "Bookings",
     path: "/bookings"
   },
   {
