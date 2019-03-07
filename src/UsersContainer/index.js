@@ -24,17 +24,41 @@ const styles = theme => ({
   }
 })
 
-function generateUsers(element) {
-  return [0, 1, 2].map(value =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  );
-}
+const users = [
+  {
+    name: 'User A'
+  },
+  {
+    name: 'User B'
+  },
+  {
+    name: 'User C'
+  }
+]
 
 class UsersContainer extends Component {
   render() {
     const { classes } = this.props;
+
+    const userLis = users.map(({name}, idx) => {
+      return (
+        <ListItem key={idx}>
+          <ListItemText
+            primary={name}
+          />
+          <ListItemSecondaryAction>
+            <Button className={classes.button} size="small" variant="contained" aria-label="User Profile">
+            <PersonIcon />
+              Profile
+            </Button>
+            <Button className={classes.button} size="small" color="secondary" light="true" variant="contained" aria-label="Report">
+              <ReceiptIcon />
+              Report
+            </Button>
+          </ListItemSecondaryAction>
+        </ListItem>
+      )
+    })
 
     return (
       <main>
@@ -42,34 +66,13 @@ class UsersContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2">
             Users
           </Typography>
-          {/* <Fab variant="extended" color="secondary" aria-label="Add User" className={classes.fab}>
-            <AddIcon className={classes.addIcon} />
-            Add User
-          </Fab> */}
           <Fab color="primary" aria-label="Add User" className={classes.fab}>
             <AddIcon />
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
             <List>
-              {generateUsers(
-                <ListItem>
-                  <ListItemText
-                    primary="User Name"
-                    secondary={'Secondary text'}
-                  />
-                  <ListItemSecondaryAction>
-                    <Button className={classes.button} size="small" variant="contained" aria-label="User Profile">
-                    <PersonIcon />
-                      Profile
-                    </Button>
-                    <Button className={classes.button} size="small" color="secondary" light="true" variant="contained" aria-label="Report">
-                      <ReceiptIcon />
-                      Report
-                    </Button>
-                  </ListItemSecondaryAction>
-                </ListItem>,
-              )}
+              {userLis}
             </List>
         </Paper>
       </main>

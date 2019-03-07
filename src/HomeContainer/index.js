@@ -56,11 +56,7 @@ const sidebarNavs = [
   }
 ]
 
-class HomeContainer extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-  
+class HomeContainer extends Component {  
   render() {
     const { classes } = this.props
     return (
