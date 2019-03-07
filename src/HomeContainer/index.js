@@ -20,6 +20,9 @@ const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1
   },
+  toolbarIcon: {
+    color: 'white'
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0
@@ -63,7 +66,7 @@ class HomeContainer extends Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
+        <AppBar position="fixed" color="secondary" className={classes.appBar}>
           <Toolbar>
             <RouterLink to="/" className={classes.routerLink}>
               <Typography variant="h5" color="inherit" noWrap>
@@ -73,10 +76,10 @@ class HomeContainer extends Component {
             <div className={classes.grow}></div>
             <div>
               <IconButton>
-                <SettingsIcon color="inherit"/>
+                <SettingsIcon className={classes.toolbarIcon} />
               </IconButton>
               <IconButton>
-                <PersonIcon color="inherit"/>
+                <PersonIcon className={classes.toolbarIcon} />
               </IconButton>
             </div>
           </Toolbar>
