@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Typography, Paper, List, ListItem, ListItemAvatar, IconButton, ListItemSecondaryAction, ListItemText, Avatar } from '@material-ui/core';
-import { Person as PersonIcon, Info as InfoIcon } from '@material-ui/icons';
+import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import { Person as PersonIcon, Receipt as ReceiptIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   paperArea: {
     padding: theme.spacing.unit * 2
+  },
+  button: {
+    margin: theme.spacing.unit,
   }
 })
 
@@ -24,25 +27,25 @@ class UsersContainer extends Component {
     return (
       <main>
         <Typography variant="h4" gutterBottom component="h2">
-          Reservations
+          Users
         </Typography>
         <Paper className={classes.paperArea}>
             <List>
               {generateUsers(
                 <ListItem>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <PersonIcon />
-                    </Avatar>
-                  </ListItemAvatar>
                   <ListItemText
                     primary="User Name"
                     secondary={'Secondary text'}
                   />
                   <ListItemSecondaryAction>
-                    <IconButton aria-label="Information">
-                      <InfoIcon />
-                    </IconButton>
+                    <Button className={classes.button} size="small" variant="contained" aria-label="User Profile">
+                    <PersonIcon />
+                      Profile
+                    </Button>
+                    <Button className={classes.button} size="small" color="secondary" dark="true" variant="contained" aria-label="Report">
+                      <ReceiptIcon />
+                      Report
+                    </Button>
                   </ListItemSecondaryAction>
                 </ListItem>,
               )}
