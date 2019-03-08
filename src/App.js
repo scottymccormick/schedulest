@@ -10,13 +10,13 @@ class App extends Component {
     super()
 
     this.state = {
-      logged: true
+      logged: false
     }
   }
   render() {
     return (
       <div className="App">
-        <Typography variant="h2">Schedulest</Typography>
+        <Typography variant="h3">Schedulest</Typography>
         <Route exact path="/auth" component={LoginContainer} />
         <Route path="/" render={ props =>
           this.state.logged ?
