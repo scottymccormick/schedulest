@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
-// import moment from 'moment'
-import {DatePicker, MuiPickersUtilsProvider} from 'material-ui-pickers'
+import moment from 'moment'
+import {DatePicker, MuiPickersUtilsProvider, TimePicker} from 'material-ui-pickers'
 
 const styles = theme => ({
   input: {
@@ -19,7 +19,9 @@ class BookingDialog extends Component {
       owner: 'John User',
       title: '',
       location: '',
-      date: new Date()
+      date: new Date(),
+      startTime: moment().hours(9).minutes(0).seconds(0),
+      endTime: moment().hours(10).minutes(0).seconds(0)
     }
 
   }
@@ -30,7 +32,14 @@ class BookingDialog extends Component {
     })
   }
   handleDateChange = (date) => {
-    this.setState({date: date.format("YYYY-MM-DD")})
+    this.setState({date})
+  }
+  handleTimeChange = async (label, time) => {
+    await this.setState({[label]: time})
+
+    if (this.state.startTime.isSameOrAfter(this.state.endTime)) {
+      console.log('invalid')
+    }
   }
   handleSubmit = () => {
     console.log('form submitted')
@@ -74,12 +83,35 @@ class BookingDialog extends Component {
               </Select>
             </FormControl>
             <FormControl fullWidth>
-                <MuiPickersUtilsProvider utils={MomentUtils}>
-                  <DatePicker margin="dense" required label="Date" name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
-                  />
-                </MuiPickersUtilsProvider>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <DatePicker margin="dense" required label="Date" name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
+                />
+              </MuiPickersUtilsProvider>
             </FormControl>
-
+            {/* Start Time */}
+            <FormControl fullWidth>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+              <TimePicker margin="dense"
+                label="Start Time"
+                value={this.state.startTime}
+                minutesStep={5}
+                onChange={this.handleTimeChange.bind(null, 'startTime')}
+              />
+              </MuiPickersUtilsProvider>
+            </FormControl>
+            {/* End Time */}
+            <FormControl fullWidth>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+              <TimePicker margin="dense"
+                label="End Time"
+                value={this.state.endTime}
+                minutesStep={5}
+                onChange={this.handleTimeChange.bind(null, 'endTime')}
+              />
+              </MuiPickersUtilsProvider>
+            </FormControl>
+            {/* Price */}
+            
           </form>
         </DialogContent>
         <DialogActions>
