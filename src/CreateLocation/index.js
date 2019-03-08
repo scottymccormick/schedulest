@@ -9,6 +9,10 @@ class LocationForm extends Component {
   handleChange = e => {
     this.setState({[e.target.name]: e.target.value})
   }
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.handleSubmit(this.state)
+  }
   render() {
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
@@ -17,7 +21,7 @@ class LocationForm extends Component {
           <DialogContentText>
             Admin users only
           </DialogContentText>
-          <form onSubmit={this.props.handleSubmit}>
+          <form onSubmit={this.handleSubmit}>
             <FormControl fullWidth required>
               <TextField autoFocus margin="normal" label="Name" name="name" type="text"
                 value={this.state.name} onChange={this.handleChange} required  />
@@ -32,7 +36,7 @@ class LocationForm extends Component {
           <Button variant="contained" onClick={this.props.onClose} color="default">
             Cancel
           </Button>
-          <Button variant="contained" onClick={this.props.handleSubmit} color="primary">
+          <Button variant="contained" onClick={this.handleSubmit} color="primary">
             Submit
           </Button>
         </DialogActions>
