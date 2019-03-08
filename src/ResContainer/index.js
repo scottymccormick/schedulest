@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment';
+import BookingDialog from '../CreateBooking';
 
 const localizer = BigCalendar.momentLocalizer(moment);
 
@@ -66,10 +67,17 @@ let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 class ResContainer extends Component {
   state = {
-    showCalendar: false
+    showCalendar: false,
+    showBookingDialog: false
   }
   toggleCalendar = () => {
     this.setState({ showCalendar: !this.state.showCalendar})
+  }
+  openBookingDialog = () => {
+    this.setState({showBookingDialog: true})
+  }
+  closeBookingDialog = () => {
+    this.setState({showBookingDialog: false})
   }
   render() {
     const { classes } = this.props
@@ -84,7 +92,7 @@ class ResContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
-          <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab}>
+          <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
             <AddIcon />
             <Typography variant="button">  Create Booking</Typography>
           </Fab>
@@ -103,6 +111,7 @@ class ResContainer extends Component {
             </div> : null
           }
         </Paper>
+        <BookingDialog open={this.state.showBookingDialog} onClose={this.closeBookingDialog}/>
       </main>
     )
   }
