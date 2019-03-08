@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
 import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
@@ -37,6 +38,10 @@ const styles = theme => ({
   calendar: {
     height: '70vh',
     width: '100%'
+  },
+  listItem: {
+    textDecoration: 'none',
+    color: 'inherit'
   }
 });
 
@@ -84,10 +89,18 @@ class ResContainer extends Component {
   closeBookingDialog = () => {
     this.setState({showBookingDialog: false})
   }
-  generateEventList = () => {
+  generateEventList = (listItemClass) => {
     return events.map(({title, resourceId}, idx) => {
       const location = locations.find((loc) => loc.id === resourceId )
-      return <li key={idx}>{title} ({location.name})</li>
+      return (
+        <RouterLink to="/" className={listItemClass}>
+          <ListItem key={idx} button >
+            <ListItemText>
+              {title} ({location.name})
+            </ListItemText>
+          </ListItem>
+        </RouterLink>
+        )
     })
   }
   render() {
@@ -121,9 +134,9 @@ class ResContainer extends Component {
               className={classes.calendar} /> 
             </div> : 
             <div>
-              <ul>
-                {this.generateEventList()}
-              </ul>
+              <List component="nav">
+                {this.generateEventList(classes.listItem)}
+              </List>
             </div>
           }
         </Paper>
