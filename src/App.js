@@ -17,13 +17,14 @@ class App extends Component {
     return (
       <div className="App">
         <Typography variant="h3">Schedulest</Typography>
-        <Route exact path="/auth" component={LoginContainer} />
+        {/* <Route exact path="/auth" component={LoginContainer} /> */}
         <Route path="/" render={ props =>
           this.state.logged ?
           <HomeContainer {...props} /> :
-          <Redirect to={{
-            pathname: "/auth"
-          }} />
+          <LoginContainer {...props} />
+          // <Redirect to={{
+          //   pathname: "/auth"
+          // }} />
           } />
       </div>
     );

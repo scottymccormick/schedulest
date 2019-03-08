@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link } from '@material-ui/core';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
+import googleLogin from '../images/google_login.png'
 
 const styles = theme => ({
   main: {
@@ -33,6 +34,10 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 3,
   },
+  orStatement: {
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit * 3
+  }
 });
 
 class LoginContainer extends Component {
@@ -72,6 +77,12 @@ class LoginContainer extends Component {
               Sign in
             </Button>
           </form>
+          <Typography variant="h6" className={classes.orStatement}>
+            or
+          </Typography>
+          <Link href="/googleauth">
+            <img src={googleLogin} alt="Sign In with Google" style={{width: '200px'}}/>
+          </Link>
         </Paper>
       </main>
     );
