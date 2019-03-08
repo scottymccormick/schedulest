@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import MomentUtils from '@date-io/moment'
+// import moment from 'moment'
+import {DatePicker, MuiPickersUtilsProvider} from 'material-ui-pickers'
+
+const styles = theme => ({
+  datePicker: {
+    marginTop: '20px'
+  }
+})
 
 class BookingDialog extends Component {
   constructor() {
@@ -8,8 +18,10 @@ class BookingDialog extends Component {
     this.state = {
       owner: 'John User',
       title: '',
-      location: ''
+      location: '',
+      date: new Date()
     }
+
   }
   handleChange = e => {
     console.log(e)
@@ -17,11 +29,15 @@ class BookingDialog extends Component {
       [e.target.name]: e.target.value
     })
   }
+  handleDateChange = (date) => {
+    this.setState({date: date.format("YYYY-MM-DD")})
+  }
   handleSubmit = () => {
     console.log('form submitted')
   }
   render() {
     console.log(this.state)
+    const { classes } = this.props
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
@@ -55,7 +71,13 @@ class BookingDialog extends Component {
                 <MenuItem value={3}>Studio 3</MenuItem>
               </Select>
             </FormControl>
-            
+            <FormControl fullWidth>
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <DatePicker name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
+                  className={classes.datePicker} />
+                </MuiPickersUtilsProvider>
+            </FormControl>
+
           </form>
         </DialogContent>
         <DialogActions>
@@ -71,4 +93,4 @@ class BookingDialog extends Component {
   }
 }
 
-export default BookingDialog;
+export default withStyles(styles)(BookingDialog);
