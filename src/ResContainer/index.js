@@ -90,10 +90,10 @@ class ResContainer extends Component {
     this.setState({showBookingDialog: false})
   }
   generateEventList = (listItemClass) => {
-    return events.map(({title, resourceId}, idx) => {
+    return events.map(({id, title, resourceId}, idx) => {
       const location = locations.find((loc) => loc.id === resourceId )
       return (
-        <RouterLink to="/" className={listItemClass}>
+        <RouterLink to={`/bookings/${id}`} className={listItemClass}>
           <ListItem key={idx} button >
             <ListItemText>
               {title} ({location.name})
@@ -118,7 +118,7 @@ class ResContainer extends Component {
           </Typography>
           <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
             <AddIcon />
-            <Typography variant="button">  Create Booking</Typography>
+            <Typography variant="button">Create Booking</Typography>
           </Fab>
         </div>
         <Paper className={classes.paperArea}>

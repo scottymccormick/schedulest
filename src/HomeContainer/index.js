@@ -7,6 +7,7 @@ import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
 import LandingContainer from '../LandingContainer';
 import LocationsContainer from '../LocationsContainer';
+import BookingDetail from '../BookingDetail';
 
 const drawerWidth = 240
 
@@ -101,6 +102,7 @@ class HomeContainer extends Component {
           {/* <div className={classes.toolbarSpacer} /> */}
           <Route exact path="/users" component={UsersContainer} />
           <Route exact path="/bookings" component={ResContainer} />
+          <Route exact path="/bookings/:id" component={BookingDetail} />
           <Route exact path="/locations" component={LocationsContainer} />
           <Route exact path="/" component={LandingContainer} />
         </main>
