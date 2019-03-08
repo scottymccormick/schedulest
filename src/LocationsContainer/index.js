@@ -3,6 +3,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
 import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
+import LocationForm from '../CreateLocation';
 
 const styles = theme => ({
   paperArea: {
@@ -45,6 +46,15 @@ const locations = [
 ]
 
 class LocationsContainer extends Component {
+  state = {
+    showCreateLocation: false
+  }
+  handleLocationOpen = () => {
+    this.setState({showCreateLocation: true})
+  }
+  handleLocationClose = () => {
+    this.setState({showCreateLocation: false})
+  }
   render() {
 
     const { classes } = this.props
@@ -74,7 +84,7 @@ class LocationsContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2">
             Locations
           </Typography>
-          <Fab color="primary" size="medium" aria-label="Add Location" className={classes.fab}>
+          <Fab color="primary" size="medium" aria-label="Add Location" className={classes.fab} onClick={this.handleLocationOpen}>
             <AddIcon />
           </Fab>
         </div>
@@ -83,6 +93,7 @@ class LocationsContainer extends Component {
               {locationLis}
             </List>
         </Paper>
+        <LocationForm open={this.state.showCreateLocation} onClose={this.handleLocationClose} />
       </main>
     )
   }
