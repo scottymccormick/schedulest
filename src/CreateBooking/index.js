@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
@@ -21,7 +21,8 @@ class BookingDialog extends Component {
       location: '',
       date: new Date(),
       startTime: moment().hours(9).minutes(0).seconds(0),
-      endTime: moment().hours(10).minutes(0).seconds(0)
+      endTime: moment().hours(10).minutes(0).seconds(0),
+      price: 20.00
     }
 
   }
@@ -111,7 +112,19 @@ class BookingDialog extends Component {
               </MuiPickersUtilsProvider>
             </FormControl>
             {/* Price */}
-            
+            <FormControl fullWidth>
+              <TextField
+                disabled
+                margin="dense"
+                label="Price"
+                name="price"
+                value={this.state.price}
+                onChange={this.handleChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>
+                }}
+                />
+            </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
