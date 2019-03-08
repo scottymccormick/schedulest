@@ -9,6 +9,7 @@ import LandingContainer from '../LandingContainer';
 import LocationsContainer from '../LocationsContainer';
 import BookingDetail from '../BookingDetail';
 import LocationDetail from '../LocationDetail';
+import UserDetail from '../UserDetail';
 
 const drawerWidth = 240
 
@@ -112,6 +113,7 @@ class HomeContainer extends Component {
         <main className={classes.content}>
           <Switch>
             <Route exact path="/users" component={UsersContainer} />
+            <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" component={ResContainer} />
             <Route exact path="/bookings/:id" component={BookingDetail} />
             <Route exact path="/locations" component={LocationsContainer} />
