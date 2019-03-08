@@ -6,8 +6,8 @@ import MomentUtils from '@date-io/moment'
 import {DatePicker, MuiPickersUtilsProvider} from 'material-ui-pickers'
 
 const styles = theme => ({
-  datePicker: {
-    marginTop: '20px'
+  input: {
+    marginTop: theme.spacing.unit
   }
 })
 
@@ -55,12 +55,14 @@ class BookingDialog extends Component {
                 type="text" onChange={this.handleChange} />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Location</InputLabel>
+              <InputLabel required>Location</InputLabel>
               <Select
+                margin="dense"
                 value={this.state.location}
                 onChange={this.handleChange}
                 inputProps={{
-                  name: 'location'
+                  name: 'location',
+                  required: true
                 }}
                 >
                 <MenuItem value={0}>
@@ -73,8 +75,8 @@ class BookingDialog extends Component {
             </FormControl>
             <FormControl fullWidth>
                 <MuiPickersUtilsProvider utils={MomentUtils}>
-                  <DatePicker name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
-                  className={classes.datePicker} />
+                  <DatePicker margin="dense" required label="Date" name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
+                  />
                 </MuiPickersUtilsProvider>
             </FormControl>
 
