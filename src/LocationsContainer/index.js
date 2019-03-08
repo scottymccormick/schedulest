@@ -55,6 +55,12 @@ class LocationsContainer extends Component {
   handleLocationClose = () => {
     this.setState({showCreateLocation: false})
   }
+  handleSubmit = e => {
+    e.preventDefault()
+    console.log('submit handled')
+
+    this.handleLocationClose()
+  }
   render() {
 
     const { classes } = this.props
@@ -93,7 +99,9 @@ class LocationsContainer extends Component {
               {locationLis}
             </List>
         </Paper>
-        <LocationForm open={this.state.showCreateLocation} onClose={this.handleLocationClose} />
+        {this.state.showCreateLocation ? 
+          <LocationForm open={this.state.showCreateLocation} onClose={this.handleLocationClose} handleSubmit={this.handleSubmit} />
+          : null}
       </main>
     )
   }
