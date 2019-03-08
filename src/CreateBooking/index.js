@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
 import {DatePicker, MuiPickersUtilsProvider, TimePicker} from 'material-ui-pickers'
 
 const styles = theme => ({
-  input: {
-    marginTop: theme.spacing.unit
+  inputMargin: {
+    margin: `${theme.spacing.unit} 0`
   }
 })
 
@@ -113,17 +113,13 @@ class BookingDialog extends Component {
             </FormControl>
             {/* Price */}
             <FormControl fullWidth>
-              <TextField
+              <InputLabel>Amount</InputLabel>
+              <Input
                 disabled
-                margin="dense"
-                label="Price"
-                name="price"
                 value={this.state.price}
-                onChange={this.handleChange}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>
-                }}
-                />
+                name="price"
+                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              />
             </FormControl>
           </form>
         </DialogContent>
