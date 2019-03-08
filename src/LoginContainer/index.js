@@ -41,6 +41,10 @@ const styles = theme => ({
 });
 
 class LoginContainer extends Component {
+  state = {
+    email: 'test@email.com',
+    password: 'super secret password'
+  }
   render() {
     const { classes } = this.props;
 
@@ -73,6 +77,7 @@ class LoginContainer extends Component {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={this.props.handleLogin.bind(null, this.state)}
               >
               Sign in
             </Button>
