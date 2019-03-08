@@ -58,6 +58,11 @@ const events = [
   }
 ]
 
+const locations = [
+  {id: 1, name: 'Studio 1'},
+  {id: 2, name: 'Studio 2'}
+]
+
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 // Create different calendars
@@ -78,6 +83,12 @@ class ResContainer extends Component {
   }
   closeBookingDialog = () => {
     this.setState({showBookingDialog: false})
+  }
+  generateEventList = () => {
+    return events.map(({title, resourceId}, idx) => {
+      const location = locations.find((loc) => loc.id === resourceId )
+      return <li key={idx}>{title} ({location.name})</li>
+    })
   }
   render() {
     const { classes } = this.props
@@ -108,7 +119,12 @@ class ResContainer extends Component {
               defaultDate={new Date()}
               localizer={localizer}
               className={classes.calendar} /> 
-            </div> : null
+            </div> : 
+            <div>
+              <ul>
+                {this.generateEventList()}
+              </ul>
+            </div>
           }
         </Paper>
         <BookingDialog open={this.state.showBookingDialog} onClose={this.closeBookingDialog}/>
