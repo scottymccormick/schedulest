@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
-import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
+import { Typography, Paper, List, ListItem, Button, ListItemText, Fab } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'

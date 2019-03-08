@@ -1,7 +1,7 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Fab, Paper, Button } from '@material-ui/core'
+import { Typography, Paper, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 
 const styles = theme => ({
