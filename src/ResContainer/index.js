@@ -93,8 +93,8 @@ class ResContainer extends Component {
     return events.map(({id, title, resourceId}, idx) => {
       const location = locations.find((loc) => loc.id === resourceId )
       return (
-        <RouterLink to={`/bookings/${id}`} className={listItemClass}>
-          <ListItem key={idx} button >
+        <RouterLink key={idx} to={`/bookings/${id}`} className={listItemClass}>
+          <ListItem button >
             <ListItemText>
               {title} ({location.name})
             </ListItemText>

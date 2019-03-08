@@ -1,6 +1,8 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Fab, Paper, Button } from '@material-ui/core'
+import { ArrowBackIos } from '@material-ui/icons'
 
 const styles = theme => ({
   paperArea: {
@@ -9,6 +11,12 @@ const styles = theme => ({
   headerDiv:  {
     position: 'relative',
     marginBottom: theme.spacing.unit * 3
+  },
+  headerButton: {
+    top: 0,
+    left: 0,
+    position: 'absolute',
+    zIndex: 10
   }
 });
 
@@ -17,6 +25,12 @@ const BookingDetail = (props) => {
   return (
     <main>
       <div className={classes.headerDiv}>
+        <RouterLink to="/bookings">
+          <Button variant="contained" color="default" className={classes.headerButton}>
+            <ArrowBackIos size="small" />
+            Bookings
+          </Button>
+        </RouterLink>
         <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
           Booking Detail
         </Typography>
