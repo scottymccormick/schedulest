@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button } from '@material-ui/core'
 
 class BookingDialog extends Component {
   constructor() {
@@ -16,6 +16,9 @@ class BookingDialog extends Component {
     this.setState({
       [e.target.name]: e.target.value
     })
+  }
+  handleSubmit = () => {
+    console.log('form submitted')
   }
   render() {
     console.log(this.state)
@@ -55,6 +58,14 @@ class BookingDialog extends Component {
             
           </form>
         </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={this.props.onClose} color="default">
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={this.handleSubmit} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
