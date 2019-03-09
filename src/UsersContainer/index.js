@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
-import { Person as PersonIcon, Receipt as ReceiptIcon, Add as AddIcon } from '@material-ui/icons';
+import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -30,6 +30,9 @@ const styles = theme => ({
   routerLink: {
     textDecoration: 'none',
     color: 'inherit'
+  },
+  footerActions: {
+    margin: theme.spacing.unit * 3
   }
 })
 
@@ -54,23 +57,18 @@ class UsersContainer extends Component {
 
     const userLis = users.map(({name, id}, idx) => {
       return (
-        <ListItem key={idx}>
-          <ListItemText
+        <RouterLink key={idx} to={`/users/${id}`} className={classes.routerLink}>
+          <ListItem button>
+            <ListItemText
             primary={name}
           />
-          <ListItemSecondaryAction>
-            <RouterLink to={`/users/${id}`} className={classes.routerLink}>
-              <Button className={classes.button} size="small" variant="contained" aria-label="User Profile">
-              <PersonIcon />
-                Profile
-              </Button>
-            </RouterLink>
-            <Button className={classes.button} size="small" color="secondary" light="true" variant="contained" aria-label="Report">
-              <ReceiptIcon />
-              Report
-            </Button>
-          </ListItemSecondaryAction>
-        </ListItem>
+            <ListItemSecondaryAction>
+                <Button className={classes.button} size="medium" variant="contained" aria-label="Edit User">
+                  <EditIcon />
+                </Button>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </RouterLink>
       )
     })
 
@@ -85,10 +83,16 @@ class UsersContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
-            <List>
-              {userLis}
-            </List>
+          <List>
+            {userLis}
+          </List>
         </Paper>
+        <div className={classes.footerActions}>
+          <Button className={classes.button} size="medium" color="secondary" light="true" variant="contained" aria-label="Report" onClick={() => console.log('print report')}>
+            <ReceiptIcon />
+            Print All Reports
+          </Button>
+        </div>
       </main>
     )
   }
