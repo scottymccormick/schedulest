@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Link as RouterLink } from 'react-router-dom';
+import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
 import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
 import LandingContainer from '../LandingContainer';
 import LocationsContainer from '../LocationsContainer';
+import BookingDetail from '../BookingDetail';
+import LocationDetail from '../LocationDetail';
+import UserDetail from '../UserDetail';
 
 const drawerWidth = 240
 
@@ -43,7 +46,7 @@ const styles = theme => ({
 
 const sidebarNavs = [
   {
-    text: "Reservations",
+    text: "Bookings",
     path: "/bookings"
   },
   {
@@ -55,6 +58,16 @@ const sidebarNavs = [
     path: "/users"
   }
 ]
+
+const page404 = () => {
+  return (
+    <div>
+      <Typography variant="h5">
+        404: Page Not Found
+      </Typography>
+    </div>
+  )
+}
 
 class HomeContainer extends Component {  
   render() {
@@ -98,11 +111,16 @@ class HomeContainer extends Component {
           </List>
         </Drawer>
         <main className={classes.content}>
-          {/* <div className={classes.toolbarSpacer} /> */}
-          <Route exact path="/users" component={UsersContainer} />
-          <Route exact path="/bookings" component={ResContainer} />
-          <Route exact path="/locations" component={LocationsContainer} />
-          <Route exact path="/" component={LandingContainer} />
+          <Switch>
+            <Route exact path="/users" component={UsersContainer} />
+            <Route exact path="/users/:id" component={UserDetail} />
+            <Route exact path="/bookings" component={ResContainer} />
+            <Route exact path="/bookings/:id" component={BookingDetail} />
+            <Route exact path="/locations" component={LocationsContainer} />
+            <Route exact path="/locations/:id" component={LocationDetail} />
+            <Route exact path="/" component={LandingContainer} />
+            <Route component={page404} />
+          </Switch>
         </main>
       </div>
     )
