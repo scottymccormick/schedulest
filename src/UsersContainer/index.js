@@ -5,6 +5,10 @@ import { Person as PersonIcon, Receipt as ReceiptIcon, Add as AddIcon } from '@m
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paperArea: {
     padding: theme.spacing.unit * 2
   },
@@ -71,7 +75,7 @@ class UsersContainer extends Component {
     })
 
     return (
-      <main>
+      <main className={classes.root}>
         <div className={classes.headerDiv}>
           <Typography variant="h4" gutterBottom component="h2">
             Users

@@ -11,6 +11,10 @@ import BookingDialog from '../CreateBooking';
 const localizer = BigCalendar.momentLocalizer(moment);
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paperArea: {
     padding: theme.spacing.unit * 2
   },
@@ -118,7 +122,7 @@ class ResContainer extends Component {
   render() {
     const { classes } = this.props
     return (
-      <main>
+      <main className={classes.root}>
         <div className={classes.headerDiv}>
           {this.state.showCalendar ? 
             <Button variant="contained" color="default" className={classes.headerButton} onClick={this.toggleCalendar} >Hide Calendar</Button> : 

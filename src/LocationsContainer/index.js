@@ -6,6 +6,10 @@ import { withStyles } from '@material-ui/core/styles';
 import LocationForm from '../CreateLocation';
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paperArea: {
     padding: theme.spacing.unit * 2
   },
@@ -88,7 +92,7 @@ class LocationsContainer extends Component {
     })
     
     return (
-      <main>
+      <main className={classes.root}>
         <div className={classes.headerDiv}>
           <Typography variant="h4" gutterBottom component="h2">
             Locations

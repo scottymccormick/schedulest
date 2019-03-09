@@ -5,6 +5,10 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paperArea: {
     padding: theme.spacing.unit * 2
   },
@@ -23,7 +27,7 @@ const styles = theme => ({
 const UserDetail = ({match, classes}) => {
   console.log(match.params.id)
   return (
-    <main>
+    <main className={classes.root}>
       <div className={classes.headerDiv}>
         <RouterLink to="/users">
           <Button variant="contained" color="default" className={classes.headerButton}>

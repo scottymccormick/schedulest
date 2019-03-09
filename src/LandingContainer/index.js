@@ -4,6 +4,10 @@ import { Typography, Paper, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paragraph: {
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit * 2,
@@ -30,7 +34,7 @@ class LandingContainer extends Component{
     const { classes } = this.props
 
     return (
-      <main>
+      <main className={classes.root}>
         <Typography variant="h4" gutterBottom component="h2">
           Welcome
         </Typography>
