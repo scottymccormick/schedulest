@@ -52,6 +52,15 @@ const users = [
 ]
 
 class UsersContainer extends Component {
+  handleEdit = e => {
+    e.preventDefault()
+    console.log('edit user')
+    // make dialog appear
+  }
+  handlePrint = e => {
+    e.preventDefault()
+    console.log('print report')
+  }
   render() {
     const { classes } = this.props;
 
@@ -63,9 +72,14 @@ class UsersContainer extends Component {
             primary={name}
           />
             <ListItemSecondaryAction>
-                <Button className={classes.button} size="medium" variant="contained" aria-label="Edit User">
-                  <EditIcon />
-                </Button>
+              <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={this.handleEdit}>
+                <EditIcon />
+                Edit User
+              </Button>
+              <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={this.handlePrint} color="secondary">
+                <ReceiptIcon />
+                Print Report
+              </Button>
             </ListItemSecondaryAction>
           </ListItem>
         </RouterLink>
