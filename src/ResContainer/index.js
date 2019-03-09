@@ -18,7 +18,7 @@ const styles = theme => ({
     margin: theme.spacing.unit,
   },
   fab: {
-    top: -1 * theme.spacing.unit,
+    top: 0,
     right: 0,
     position: 'absolute'
   },
@@ -76,9 +76,13 @@ let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 // Need to be able to view 
 
 class ResContainer extends Component {
-  state = {
-    showCalendar: false,
-    showBookingDialog: false
+  constructor() {
+    super();
+
+    this.state = {
+      showCalendar: false,
+      showBookingDialog: false
+    }
   }
   toggleCalendar = () => {
     this.setState({ showCalendar: !this.state.showCalendar})
@@ -103,9 +107,16 @@ class ResContainer extends Component {
         )
     })
   }
+  componentDidMount() {
+    if (this.props.location.state) {
+      const { showBookingDialog } = this.props.location.state
+      if (showBookingDialog) {
+        this.setState({showBookingDialog})
+      }
+    }
+  }
   render() {
     const { classes } = this.props
-    console.log(this.state)
     return (
       <main>
         <div className={classes.headerDiv}>

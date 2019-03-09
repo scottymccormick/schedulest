@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Typography, Paper, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -17,6 +18,10 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-around',
     size: 'large'
+  },
+  navLink: {
+    textDecoration: 'none',
+    color: 'inherit'
   }
 })
 
@@ -38,7 +43,12 @@ class LandingContainer extends Component{
           Quick Links
         </Typography>
         <Paper className={classes.buttonDiv}>
-          <Button size="large" variant="contained" color="primary">Create Booking</Button>
+          <RouterLink className={classes.navLink} to={{
+            pathname: '/bookings',
+            state: { showBookingDialog: true }}
+          }>
+            <Button size="large" variant="contained" color="primary">Create Booking</Button>
+          </RouterLink>
           <Button size="large" variant="contained" color="secondary">Print Reports</Button>
           <Button size="large" variant="contained" color="inherit">View Schedule</Button>
         </Paper>
