@@ -13,10 +13,32 @@ class App extends Component {
       logged: false
     }
   }
-  handleLogin = (formData, e) => {
+  handleLogin = async (formData, e) => {
     e.preventDefault()
     console.log(formData)
-    // this.setState({logged: true})
+
+    try {
+      const loginResponse = await fetch('http://localhost:9000/api/v1/auth/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!loginResponse.ok) {
+        throw Error(loginResponse.statusText)
+      }
+
+      const parsedResponse = await loginResponse.json()
+
+      console.log(parsedResponse)
+    } catch (error) {
+      console.log(error)
+      // return error
+    }
+    
   }
   render() {
     return (
