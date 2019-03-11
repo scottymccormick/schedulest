@@ -54,31 +54,35 @@ class App extends Component {
       user: null
     })
   }
+  
   componentDidMount = async () => {
-    console.log('should test for login here')
     try {
-      const token = localStorage.getItem('jwtToken')
-      if (token) {
-        const loginResponse = await fetch('http://localhost:9000/api/v1/users/test', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${token}`
+      if (!this.state.logged) {
+        const token = localStorage.getItem('jwtToken')
+        if (token) {
+          const loginResponse = await fetch('http://localhost:9000/api/v1/users/test', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          
+          if (!loginResponse.ok) {
+            throw Error(loginResponse.statusText)
+            // your token expired, please log in
           }
-        })
-        
-        if (!loginResponse.ok) {
-          throw Error(loginResponse.statusText)
-          // your token expired, please log in
+          
+          const parsedResponse = await loginResponse.json()
+          
+          console.log(parsedResponse)
+          this.setState({
+            logged: true,
+            user: parsedResponse.user
+          })
         }
-        
-        const parsedResponse = await loginResponse.json()
-        
-        console.log(parsedResponse)
-        this.setState({
-          logged: true,
-          user: parsedResponse.user
-        })
+      } else {
+        console.log('component did mount is logged in')
       }
 
     } catch (error) {
@@ -91,7 +95,7 @@ class App extends Component {
         <Typography variant="h3">Schedulest</Typography>
         <Route path="/" render={ props =>
           this.state.logged ?
-          <HomeContainer {...props} handleLogout={this.handleLogout}/> :
+          <HomeContainer {...props} loggedInfo={this.state} handleLogout={this.handleLogout}/> :
           <LoginContainer {...props} handleLogin={this.handleLogin} />
           } />
       </div>

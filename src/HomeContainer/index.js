@@ -74,7 +74,9 @@ class HomeContainer extends Component {
     super()
 
     this.state = {
-      anchorEl: null
+      anchorEl: null,
+      orgId: '',
+      orgName: ''
     }
   }
   handleProfileMenu = e => {
@@ -87,9 +89,36 @@ class HomeContainer extends Component {
       anchorEl: null
     })
   }
+  getOrgInfo = async () => {
+    try {
+      // fetch first organization for now
+      const token = localStorage.getItem('jwtToken')
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.props.loggedInfo.user.organizations[0]}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgResponse.ok) {
+        throw Error(orgResponse.statusText)
+      }
+
+      const parsedResponse = await orgResponse.json()
+
+      this.setState({
+        orgId: parsedResponse._id,
+        orgName: parsedResponse.name
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
+    if (!this.state.orgId) this.getOrgInfo()
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -97,7 +126,7 @@ class HomeContainer extends Component {
           <Toolbar>
             <RouterLink to="/" className={classes.routerLink}>
               <Typography variant="h5" color="inherit" noWrap>
-                Schedulest | Company X
+                Schedulest | {this.state.orgName || 'uh oh'}
               </Typography>
             </RouterLink>
             <div className={classes.grow}></div>
@@ -127,7 +156,7 @@ class HomeContainer extends Component {
                 open={open}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem>
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>
               
