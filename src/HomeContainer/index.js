@@ -169,9 +169,6 @@ class HomeContainer extends Component {
         return {name, description, _id}
       })
 
-      console.log('Loc results')
-      console.log(formattedResponse)
-
       await this.setState({
         locs: formattedResponse
       })
@@ -254,9 +251,13 @@ class HomeContainer extends Component {
               props => <UsersContainer {...props} users={this.state.users} />
               } />
             <Route exact path="/users/:id" component={UserDetail} />
-            <Route exact path="/bookings" component={ResContainer} />
+            <Route exact path="/bookings" render={
+              props => <ResContainer {...props} />
+              } />
             <Route exact path="/bookings/:id" component={BookingDetail} />
-            <Route exact path="/locations" component={LocationsContainer} />
+            <Route exact path="/locations" render={
+              props => <LocationsContainer {...props} locs={this.state.locs} />
+              } />
             <Route exact path="/locations/:id" component={LocationDetail} />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />

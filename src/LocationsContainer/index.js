@@ -51,8 +51,7 @@ const locations = [
 
 class LocationsContainer extends Component {
   state = {
-    showCreateLocation: false,
-    locations: locations
+    showCreateLocation: false
   }
   handleLocationOpen = () => {
     this.setState({showCreateLocation: true})
@@ -62,9 +61,10 @@ class LocationsContainer extends Component {
   }
   handleSubmit = (location) => {
     console.log('submit handled')
-    this.setState({
-      locations: [location, ...this.state.locations]
-    })
+    // this.setState({
+    //   locations: [location, ...this.state.locations]
+    // })
+    // send to upper component
 
     this.handleLocationClose()
   }
@@ -72,7 +72,7 @@ class LocationsContainer extends Component {
 
     const { classes } = this.props
     
-    const locationLis = this.state.locations.map(({name, description}, idx) => {
+    const locationLis = this.props.locs.map(({name, description}, idx) => {
       return (
         <ListItem key={idx}>
           <ListItemText
