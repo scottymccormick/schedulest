@@ -194,26 +194,25 @@ class HomeContainer extends Component {
 
       const parsedResponse = await orgBookingsResponse.json()
       console.log(parsedResponse)
-      // const formattedResponse = parsedResponse.map((loc) => {
-      //   const {name, description, _id} = loc
-      //   return {name, description, _id}
-      // })
 
-      // await this.setState({
-      //   bookings: formattedResponse
-      // })
+      await this.setState({
+        bookings: parsedResponse
+      })
     } catch (error) {
       console.log(error)
     }
+  }
+  getOrgValues = async () => {
+    this.getOrgInfo()
+    this.getOrgUsers()
+    this.getOrgLocs()
+    this.getOrgBookings()
   }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
     if (!this.state.orgId) {
-      this.getOrgInfo()
-      this.getOrgUsers()
-      this.getOrgLocs()
-      this.getOrgBookings()
+      this.getOrgValues()
     }
     return (
       <div className={classes.root}>
