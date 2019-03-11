@@ -75,8 +75,8 @@ class HomeContainer extends Component {
 
     this.state = {
       anchorEl: null,
-      orgId: '',
       orgName: '',
+      orgId: '',
       users: []
     }
   }
@@ -94,7 +94,7 @@ class HomeContainer extends Component {
     try {
       // fetch first organization for now
       const token = localStorage.getItem('jwtToken')
-      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.props.loggedInfo.user.organizations[0]}`, {
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -109,11 +109,9 @@ class HomeContainer extends Component {
       const parsedResponse = await orgResponse.json()
 
       await this.setState({
-        orgId: parsedResponse._id,
-        orgName: parsedResponse.name
+        orgName: parsedResponse.name,
+        orgId: parsedResponse._id
       })
-
-      this.getOrgUsers()
 
     } catch (error) {
       console.log(error)
@@ -122,8 +120,7 @@ class HomeContainer extends Component {
   getOrgUsers = async () => {
     try {
       const token = localStorage.getItem('jwtToken')
-      console.log('org id', this.state.orgId)
-      const orgUsersResponse = await fetch(`http://localhost:9000/api/v1/users?org=${this.state.orgId}`, {
+      const orgUsersResponse = await fetch(`http://localhost:9000/api/v1/users?org=${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -142,8 +139,6 @@ class HomeContainer extends Component {
         return {name, email, _id}
       })
 
-      console.log(formattedResponse)
-
       await this.setState({
         users: formattedResponse
       })
@@ -156,7 +151,7 @@ class HomeContainer extends Component {
     const open = Boolean(this.state.anchorEl)
     if (!this.state.orgId) {
       this.getOrgInfo()
-      // this.getOrgUsers()
+      this.getOrgUsers()
     }
     return (
       <div className={classes.root}>

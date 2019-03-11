@@ -11,12 +11,12 @@ class App extends Component {
 
     this.state = {
       logged: false,
-      user: null
+      user: null,
+      orgId: ''
     }
   }
   handleLogin = async (formData, e) => {
     e.preventDefault()
-    console.log(formData)
 
     try {
       const loginResponse = await fetch('http://localhost:9000/api/v1/auth/login', {
@@ -34,16 +34,14 @@ class App extends Component {
 
       const parsedResponse = await loginResponse.json()
 
-      console.log(parsedResponse)
-
       localStorage.setItem('jwtToken', parsedResponse.token)
       this.setState({
         logged: true,
-        user: parsedResponse.user
+        user: parsedResponse.user,
+        orgId: parsedResponse.user.organizations[0]
       })
     } catch (error) {
       console.log(error)
-      // return error
     }
     
   }
@@ -51,7 +49,8 @@ class App extends Component {
     localStorage.removeItem('jwtToken')
     this.setState({
       logged: false,
-      user: null
+      user: null,
+      orgId: ''
     })
   }
   
@@ -75,10 +74,10 @@ class App extends Component {
           
           const parsedResponse = await loginResponse.json()
           
-          console.log(parsedResponse)
           this.setState({
             logged: true,
-            user: parsedResponse.user
+            user: parsedResponse.user,
+            orgId: parsedResponse.user.organizations[0]
           })
         }
       } else {
