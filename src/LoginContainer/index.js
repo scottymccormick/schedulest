@@ -42,12 +42,17 @@ const styles = theme => ({
 
 class LoginContainer extends Component {
   state = {
-    email: 'test@email.com',
-    password: 'super secret password'
+    email: 'bobby@gmail.com',
+    password: 'my hashed password'
+  }
+  handleChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
   }
   render() {
     const { classes } = this.props;
-
+    console.log(this.state)
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -61,11 +66,11 @@ class LoginContainer extends Component {
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input id="email" name="email" autoComplete="email" autoFocus />
+              <Input id="email" name="email" autoComplete="email" value={this.state.email} onChange={this.handleChange} autoFocus />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
-              <Input name="password" type="password" id="password" autoComplete="current-password" />
+              <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} autoComplete="current-password" />
             </FormControl>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

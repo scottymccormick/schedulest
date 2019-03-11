@@ -10,13 +10,13 @@ class App extends Component {
     super()
 
     this.state = {
-      logged: true
+      logged: false
     }
   }
   handleLogin = (formData, e) => {
     e.preventDefault()
     console.log(formData)
-    this.setState({logged: true})
+    // this.setState({logged: true})
   }
   render() {
     return (
