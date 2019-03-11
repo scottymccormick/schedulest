@@ -67,11 +67,6 @@ const events = [
   }
 ]
 
-const locations = [
-  {id: 1, name: 'Studio 1'},
-  {id: 2, name: 'Studio 2'}
-]
-
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 // Create different calendars
@@ -99,12 +94,16 @@ class ResContainer extends Component {
   }
   getBookingListItem = (location, listItemClass) => {
     return (
-      location.map(({_id, title, owner, startTime, endTime, price}) => {
+      location.map(({_id, title, owner, date, startTime, endTime, price}) => {
+        const ownerName = (this.props.users.find((user) => user._id === owner)).name
+        const primaryText = `${ownerName} (${title}) - ${moment(date).format('LL')}`
+        const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
         return (
           <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
             <ListItem button >
-              <ListItemText>
-                {title} ({owner}) {price}
+              <ListItemText 
+                primary={primaryText}
+                secondary={secondaryText}>
               </ListItemText>
             </ListItem>
           </RouterLink>
@@ -113,11 +112,10 @@ class ResContainer extends Component {
     )
   }
   generateEventList = (listItemClass) => {
-
     return this.props.bookings.map((location, idx) => {
       return (
         <div key={idx}>
-          <Typography variant="h5">
+          <Typography variant="h6">
             {(this.props.locs.find((loc) => loc._id === location[0].location)).name}
           </Typography>
           { this.getBookingListItem(location, listItemClass) }

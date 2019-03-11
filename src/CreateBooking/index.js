@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
