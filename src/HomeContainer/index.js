@@ -222,6 +222,10 @@ class HomeContainer extends Component {
       bookings: newBookingsState
     })
   }
+  deleteBooking = e => {
+    e.preventDefault()
+    console.log('reached delete')
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
@@ -301,6 +305,7 @@ class HomeContainer extends Component {
                 users={this.state.users}
                 bookings={this.state.bookings}
                 addBooking={this.addBooking}
+                deleteBooking={this.deleteBooking}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" component={BookingDetail} />
