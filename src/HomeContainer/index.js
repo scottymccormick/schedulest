@@ -76,7 +76,8 @@ class HomeContainer extends Component {
     this.state = {
       anchorEl: null,
       orgId: '',
-      orgName: ''
+      orgName: '',
+      users: []
     }
   }
   handleProfileMenu = e => {
@@ -107,10 +108,36 @@ class HomeContainer extends Component {
 
       const parsedResponse = await orgResponse.json()
 
-      this.setState({
+      await this.setState({
         orgId: parsedResponse._id,
         orgName: parsedResponse.name
       })
+
+      this.getOrgUsers()
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getOrgUsers = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      console.log('org id', this.state.orgId)
+      const orgUsersResponse = await fetch(`http://localhost:9000/api/v1/users?org=${this.state.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgUsersResponse.ok) {
+        throw Error(orgUsersResponse.statusText)
+      }
+
+      const parsedResponse = await orgUsersResponse.json()
+      
+      console.log(parsedResponse)
     } catch (error) {
       console.log(error)
     }
@@ -118,7 +145,10 @@ class HomeContainer extends Component {
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
-    if (!this.state.orgId) this.getOrgInfo()
+    if (!this.state.orgId) {
+      this.getOrgInfo()
+      // this.getOrgUsers()
+    }
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -126,7 +156,7 @@ class HomeContainer extends Component {
           <Toolbar>
             <RouterLink to="/" className={classes.routerLink}>
               <Typography variant="h5" color="inherit" noWrap>
-                Schedulest | {this.state.orgName || 'uh oh'}
+                Schedulest | {this.state.orgName || 'Org Name Not Found'}
               </Typography>
             </RouterLink>
             <div className={classes.grow}></div>
