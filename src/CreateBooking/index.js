@@ -20,9 +20,9 @@ class BookingDialog extends Component {
       title: '',
       location: '',
       created_by: '',
-      date: moment().valueOf(),
-      startTime: moment().hours(9).minutes(0).seconds(0).valueOf(),
-      endTime: moment().hours(10).minutes(0).seconds(0).valueOf(),
+      date: moment().toDate(),
+      startTime: moment().minutes(0).seconds(0).toDate(),
+      endTime: moment().add(1, 'h').minutes(0).seconds(0).toDate(),
       price: 20.00
     }
 
@@ -89,12 +89,6 @@ class BookingDialog extends Component {
                     <MenuItem key={loc._id} value={loc._id}>{loc.name}</MenuItem>
                   )
                 })}
-                {/* <MenuItem value={0}>
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={1}>Studio 1</MenuItem>
-                <MenuItem value={2}>Studio 2</MenuItem>
-                <MenuItem value={3}>Studio 3</MenuItem> */}
               </Select>
             </FormControl>
             <FormControl fullWidth>
