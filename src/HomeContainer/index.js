@@ -211,13 +211,13 @@ class HomeContainer extends Component {
   }
   addBooking = (newBooking) => {
     const locIdx = this.state.bookings.findIndex((location) => {
-      return newBooking.location === location[0].location
+      return newBooking.location === location.info._id
     })
     const updatedLocation = [
-      ...this.state.bookings[locIdx], newBooking
+      ...this.state.bookings[locIdx].bookings, newBooking
     ]
     const newBookingsState = this.state.bookings
-    newBookingsState[locIdx] = updatedLocation
+    newBookingsState[locIdx].bookings = updatedLocation
     this.setState({
       bookings: newBookingsState
     })

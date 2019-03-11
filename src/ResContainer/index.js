@@ -96,9 +96,9 @@ class ResContainer extends Component {
       this.props.addBooking(newBooking)
     }
   }
-  getBookingListItem = (location, listItemClass) => {
+  getBookingListItem = (bookings, listItemClass) => {
     return (
-      location.map(({_id, title, owner, date, startTime, endTime, price}) => {
+      bookings.map(({_id, title, owner, date, startTime, endTime, price}) => {
         const ownerName = (this.props.users.find((user) => user._id === owner)).name
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
@@ -117,12 +117,14 @@ class ResContainer extends Component {
   }
   generateEventList = (listItemClass) => {
     return this.props.bookings.map((location, idx) => {
+      if (location.length === 0 ) return null
+      console.log('location', location)
       return (
         <div key={idx}>
           <Typography variant="h6">
-            {(this.props.locs.find((loc) => loc._id === location[0].location)).name}
+            {location.info.name}
           </Typography>
-          { this.getBookingListItem(location, listItemClass) }
+          { this.getBookingListItem(location.bookings, listItemClass) }
         </div>
       ) 
     })
