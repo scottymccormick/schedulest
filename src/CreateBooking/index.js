@@ -46,15 +46,18 @@ class BookingDialog extends Component {
   handleSubmit = () => {
     console.log('form submitted')
   }
+  loadUser = async () => {
+    await this.setState({
+      owner: this.props.loggedInfo.user.name,
+      created_by: this.props.loggedInfo.user._id
+    })
+  }
   render() {
     console.log(this.state)
     // const { classes } = this.props
 
     if (!this.state.created_by) {
-      this.setState({
-        owner: this.props.loggedInfo.user.name,
-        created_by: this.props.loggedInfo.user._id
-      })
+      this.loadUser()
     }
 
     return (

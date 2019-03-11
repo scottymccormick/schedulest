@@ -35,7 +35,8 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit
   },
   routerLink: {
     textDecoration: 'none',
@@ -188,7 +189,7 @@ class HomeContainer extends Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" color="secondary" className={classes.appBar}>
+        <AppBar position="fixed" color="primary" className={classes.appBar}>
           <Toolbar>
             <RouterLink to="/" className={classes.routerLink}>
               <Typography variant="h5" color="inherit" noWrap>

@@ -131,7 +131,7 @@ class ResContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
-          <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
+          <Fab color="secondary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
             <AddIcon />
             <Typography variant="button">Create Booking</Typography>
           </Fab>
