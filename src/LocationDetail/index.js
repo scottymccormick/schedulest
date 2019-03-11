@@ -5,6 +5,10 @@ import { Typography, Paper, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 
 const styles = theme => ({
+  root: {
+    maxWidth: '900px',
+    margin: 'auto'
+  },
   paperArea: {
     padding: theme.spacing.unit * 2
   },
@@ -24,7 +28,7 @@ const LocationDetail = (props) => {
   const { classes } = props
   console.log('Chosen ID', props.match.params.id)
   return (
-    <main>
+    <main className={classes.root}>
       <div className={classes.headerDiv}>
         <RouterLink to="/locations">
           <Button variant="contained" color="default" className={classes.headerButton}>
