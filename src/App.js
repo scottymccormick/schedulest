@@ -34,11 +34,46 @@ class App extends Component {
       const parsedResponse = await loginResponse.json()
 
       console.log(parsedResponse)
+
+      localStorage.setItem('jwtToken', parsedResponse.token)
+      this.setState({
+        logged: true
+      })
     } catch (error) {
       console.log(error)
       // return error
     }
     
+  }
+  componentDidMount = async () => {
+    console.log('should test for login here')
+    try {
+      const token = localStorage.getItem('jwtToken')
+      if (token) {
+        const loginResponse = await fetch('http://localhost:9000/api/v1/users/test', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        if (!loginResponse.ok) {
+          throw Error(loginResponse.statusText)
+          // your token expired, please log in
+        }
+        
+        const parsedResponse = await loginResponse.json()
+        
+        console.log(parsedResponse)
+        this.setState({
+          logged: true
+        })
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
   }
   render() {
     return (
