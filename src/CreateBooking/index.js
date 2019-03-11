@@ -89,14 +89,32 @@ class BookingDialog extends Component {
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          {/* <DialogContentText>
             To reserve a room, please fill out the fields below
-          </DialogContentText>
+          </DialogContentText> */}
           <form action="">
             <FormControl fullWidth>
+              <InputLabel required>Owner</InputLabel>
+              <Select
+                margin="dense"
+                value={this.state.owner}
+                onChange={this.handleChange}
+                inputProps={{
+                  name: 'owner',
+                  required: true
+                }}
+                >
+                {this.props.users.map((user) => {
+                  return (
+                    <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+            {/* <FormControl fullWidth>
               <TextField margin="dense" label="Name" name="owner" type="text"
                 value={this.state.owner} onChange={this.handleChange} required  />
-            </FormControl>
+            </FormControl> */}
             <FormControl fullWidth>
               <TextField margin="dense" label="Title (optional)" name="title"
                 type="text" onChange={this.handleChange} />
