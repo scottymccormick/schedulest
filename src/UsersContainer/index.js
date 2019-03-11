@@ -36,21 +36,6 @@ const styles = theme => ({
   }
 })
 
-const users = [
-  {
-    id: 0,
-    name: 'User A'
-  },
-  {
-    id: 1,
-    name: 'User B'
-  },
-  {
-    id: 2,
-    name: 'User C'
-  }
-]
-
 class UsersContainer extends Component {
   handleEdit = e => {
     e.preventDefault()

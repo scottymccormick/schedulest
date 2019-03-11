@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography } from '@material-ui/core';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import './App.css';
 import HomeContainer from './HomeContainer';
 import LoginContainer from './LoginContainer';

@@ -47,7 +47,7 @@ class BookingDialog extends Component {
   }
   render() {
     console.log(this.state)
-    const { classes } = this.props
+    // const { classes } = this.props
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
