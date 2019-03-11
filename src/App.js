@@ -10,7 +10,8 @@ class App extends Component {
     super()
 
     this.state = {
-      logged: false
+      logged: false,
+      user: null
     }
   }
   handleLogin = async (formData, e) => {
@@ -37,7 +38,8 @@ class App extends Component {
 
       localStorage.setItem('jwtToken', parsedResponse.token)
       this.setState({
-        logged: true
+        logged: true,
+        user: parsedResponse.user
       })
     } catch (error) {
       console.log(error)
@@ -67,7 +69,8 @@ class App extends Component {
         
         console.log(parsedResponse)
         this.setState({
-          logged: true
+          logged: true,
+          user: parsedResponse.user
         })
       }
 
