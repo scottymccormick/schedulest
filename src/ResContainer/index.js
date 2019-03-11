@@ -155,7 +155,13 @@ class ResContainer extends Component {
             </div>
           }
         </Paper>
-        <BookingDialog open={this.state.showBookingDialog} onClose={this.closeBookingDialog}/>
+        <BookingDialog 
+          open={this.state.showBookingDialog} 
+          onClose={this.closeBookingDialog}
+          locs={this.props.locs}
+          users={this.props.users}
+          loggedInfo={this.props.loggedInfo}
+          />
       </main>
     )
   }

@@ -34,21 +34,6 @@ const styles = theme => ({
   }
 })
 
-const locations = [
-  {
-    name: 'Location 1',
-    description: 'Additional text'
-  },
-  {
-    name: 'Location 2',
-    description: 'Additional text'
-  },
-  {
-    name: 'Location 3',
-    description: 'Additional text'
-  }
-]
-
 class LocationsContainer extends Component {
   state = {
     showCreateLocation: false

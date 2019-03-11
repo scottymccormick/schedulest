@@ -16,12 +16,13 @@ class BookingDialog extends Component {
     super()
 
     this.state = {
-      owner: 'John User',
+      owner: '',
       title: '',
       location: '',
-      date: new Date(),
-      startTime: moment().hours(9).minutes(0).seconds(0),
-      endTime: moment().hours(10).minutes(0).seconds(0),
+      created_by: '',
+      date: moment().valueOf(),
+      startTime: moment().hours(9).minutes(0).seconds(0).valueOf(),
+      endTime: moment().hours(10).minutes(0).seconds(0).valueOf(),
       price: 20.00
     }
 
@@ -48,6 +49,14 @@ class BookingDialog extends Component {
   render() {
     console.log(this.state)
     // const { classes } = this.props
+
+    if (!this.state.created_by) {
+      this.setState({
+        owner: this.props.loggedInfo.user.name,
+        created_by: this.props.loggedInfo.user._id
+      })
+    }
+
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
@@ -75,12 +84,17 @@ class BookingDialog extends Component {
                   required: true
                 }}
                 >
-                <MenuItem value={0}>
+                {this.props.locs.map((loc) => {
+                  return (
+                    <MenuItem key={loc._id} value={loc._id}>{loc.name}</MenuItem>
+                  )
+                })}
+                {/* <MenuItem value={0}>
                   <em>None</em>
                 </MenuItem>
                 <MenuItem value={1}>Studio 1</MenuItem>
                 <MenuItem value={2}>Studio 2</MenuItem>
-                <MenuItem value={3}>Studio 3</MenuItem>
+                <MenuItem value={3}>Studio 3</MenuItem> */}
               </Select>
             </FormControl>
             <FormControl fullWidth>

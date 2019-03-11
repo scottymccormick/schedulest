@@ -183,6 +183,7 @@ class HomeContainer extends Component {
       this.getOrgInfo()
       this.getOrgUsers()
       this.getOrgLocs()
+      // this.getOrgBookings()
     }
     return (
       <div className={classes.root}>
@@ -252,7 +253,10 @@ class HomeContainer extends Component {
               } />
             <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" render={
-              props => <ResContainer {...props} />
+              props => <ResContainer {...props} 
+                locs={this.state.locs}
+                users={this.state.users}
+                loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" component={BookingDetail} />
             <Route exact path="/locations" render={
