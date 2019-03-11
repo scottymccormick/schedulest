@@ -63,10 +63,9 @@ class UsersContainer extends Component {
   }
   render() {
     const { classes } = this.props;
-
-    const userLis = users.map(({name, id}, idx) => {
+    const userLis = this.props.users.map(({name, _id}, idx) => {
       return (
-        <RouterLink key={idx} to={`/users/${id}`} className={classes.routerLink}>
+        <RouterLink key={idx} to={`/users/${_id}`} className={classes.routerLink}>
           <ListItem button>
             <ListItemText
             primary={name}

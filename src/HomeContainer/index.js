@@ -137,7 +137,16 @@ class HomeContainer extends Component {
 
       const parsedResponse = await orgUsersResponse.json()
       
-      console.log(parsedResponse)
+      const formattedResponse = parsedResponse.map((user) => {
+        const {name, email, _id} = user
+        return {name, email, _id}
+      })
+
+      console.log(formattedResponse)
+
+      await this.setState({
+        users: formattedResponse
+      })
     } catch (error) {
       console.log(error)
     }
@@ -212,7 +221,9 @@ class HomeContainer extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/users" component={UsersContainer} />
+            <Route exact path="/users" render={ 
+              props => <UsersContainer {...props} users={this.state.users} />
+              } />
             <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" component={ResContainer} />
             <Route exact path="/bookings/:id" component={BookingDetail} />
