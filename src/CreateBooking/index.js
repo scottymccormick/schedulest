@@ -67,8 +67,6 @@ class BookingDialog extends Component {
     } catch (error) {
       console.log(error)
     }
-    // console.log(this.state)
-    // console.log('form submitted')
   }
   loadUser = async () => {
     await this.setState({

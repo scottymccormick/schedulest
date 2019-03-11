@@ -177,6 +177,35 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
+  getOrgBookings = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgBookingsResponse = await fetch(`http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgBookingsResponse.ok) {
+        throw Error(orgBookingsResponse.statusText)
+      }
+
+      const parsedResponse = await orgBookingsResponse.json()
+      console.log(parsedResponse)
+      // const formattedResponse = parsedResponse.map((loc) => {
+      //   const {name, description, _id} = loc
+      //   return {name, description, _id}
+      // })
+
+      // await this.setState({
+      //   bookings: formattedResponse
+      // })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
@@ -184,7 +213,7 @@ class HomeContainer extends Component {
       this.getOrgInfo()
       this.getOrgUsers()
       this.getOrgLocs()
-      // this.getOrgBookings()
+      this.getOrgBookings()
     }
     return (
       <div className={classes.root}>
