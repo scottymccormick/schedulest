@@ -97,10 +97,22 @@ class ResContainer extends Component {
   closeBookingDialog = () => {
     this.setState({showBookingDialog: false})
   }
+  getBookingListItem = (location, listItemClass) => {
+    return (
+      location.map(({_id, title, owner, startTime, endTime, price}) => {
+        return (
+          <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
+            <ListItem button >
+              <ListItemText>
+                {title} ({owner}) {price}
+              </ListItemText>
+            </ListItem>
+          </RouterLink>
+        )
+      })
+    )
+  }
   generateEventList = (listItemClass) => {
-    console.log('generate event list')
-    console.log('locs', this.props.locs)
-    console.log(this.props.bookings)
 
     return this.props.bookings.map((location, idx) => {
       return (
@@ -108,34 +120,10 @@ class ResContainer extends Component {
           <Typography variant="h5">
             {(this.props.locs.find((loc) => loc._id === location[0].location)).name}
           </Typography>
-          {location.map(({_id, title, owner, startTime, endTime, price}) => {
-            return (
-              <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
-                  <ListItem button >
-                    <ListItemText>
-                      {title} ({owner}) {price}
-                    </ListItemText>
-                  </ListItem>
-                </RouterLink>
-                )
-              })
-            }
+          { this.getBookingListItem(location, listItemClass) }
         </div>
       ) 
     })
-
-    // return this.props.bookings.map(({_id, title, location}, idx) => {
-    //   // const location = locations.find((loc) => loc.id === resourceId )
-    //   return (
-    //     <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
-    //       <ListItem button >
-    //         <ListItemText>
-    //           {title} ({location.name})
-    //         </ListItemText>
-    //       </ListItem>
-    //     </RouterLink>
-    //     )
-    // })
   }
   componentDidMount() {
     if (this.props.location.state) {

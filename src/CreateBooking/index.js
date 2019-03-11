@@ -76,6 +76,20 @@ class BookingDialog extends Component {
       createdBy: this.props.loggedInfo.user._id
     })
   }
+  getUserList = () => {
+    return this.props.users.map((user) => {
+      return (
+        <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>
+      )
+    })
+  }
+  getLocsList = () => {
+    return this.props.locs.map((loc) => {
+      return (
+        <MenuItem key={loc._id} value={loc._id}>{loc.name}</MenuItem>
+      )
+    })
+  }
   render() {
     console.log(this.state)
     // const { classes } = this.props
@@ -89,9 +103,6 @@ class BookingDialog extends Component {
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
-            To reserve a room, please fill out the fields below
-          </DialogContentText> */}
           <form action="">
             <FormControl fullWidth>
               <InputLabel required>Owner</InputLabel>
@@ -104,17 +115,9 @@ class BookingDialog extends Component {
                   required: true
                 }}
                 >
-                {this.props.users.map((user) => {
-                  return (
-                    <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>
-                  )
-                })}
+                {this.props.users ? this.getUserList() : null }
               </Select>
             </FormControl>
-            {/* <FormControl fullWidth>
-              <TextField margin="dense" label="Name" name="owner" type="text"
-                value={this.state.owner} onChange={this.handleChange} required  />
-            </FormControl> */}
             <FormControl fullWidth>
               <TextField margin="dense" label="Title (optional)" name="title"
                 type="text" onChange={this.handleChange} />
@@ -130,11 +133,7 @@ class BookingDialog extends Component {
                   required: true
                 }}
                 >
-                {this.props.locs.map((loc) => {
-                  return (
-                    <MenuItem key={loc._id} value={loc._id}>{loc.name}</MenuItem>
-                  )
-                })}
+                {this.props.locs ? this.getLocsList() : null}
               </Select>
             </FormControl>
             <FormControl fullWidth>
