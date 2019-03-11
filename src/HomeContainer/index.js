@@ -77,7 +77,8 @@ class HomeContainer extends Component {
       anchorEl: null,
       orgName: '',
       orgId: '',
-      users: []
+      users: [],
+      locs: []
     }
   }
   handleProfileMenu = e => {
@@ -146,12 +147,45 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
+  getOrgLocs = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgLocsResponse = await fetch(`http://localhost:9000/api/v1/locs?org=${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgLocsResponse.ok) {
+        throw Error(orgLocsResponse.statusText)
+      }
+
+      const parsedResponse = await orgLocsResponse.json()
+      
+      const formattedResponse = parsedResponse.map((loc) => {
+        const {name, description, _id} = loc
+        return {name, description, _id}
+      })
+
+      console.log('Loc results')
+      console.log(formattedResponse)
+
+      await this.setState({
+        locs: formattedResponse
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
     if (!this.state.orgId) {
       this.getOrgInfo()
       this.getOrgUsers()
+      this.getOrgLocs()
     }
     return (
       <div className={classes.root}>
