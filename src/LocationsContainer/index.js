@@ -45,7 +45,7 @@ class LocationsContainer extends Component {
     this.setState({showCreateLocation: false})
   }
   handleSubmit = (location) => {
-    console.log('submit handled')
+    this.props.addLocation(location)
     // this.setState({
     //   locations: [location, ...this.state.locations]
     // })

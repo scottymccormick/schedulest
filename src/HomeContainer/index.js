@@ -259,6 +259,42 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
+  addLocation = async (locationData) => {
+    console.log(locationData)
+
+    
+    // post location to api
+    try {
+      const requestBody = {
+        ...locationData,
+        organization: this.state.orgId
+      }
+      const token = localStorage.getItem('jwtToken')
+      const locResponse = await fetch(`http://localhost:9000/api/v1/locs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!locResponse.ok) {
+        throw Error(locResponse.statusText)
+      }
+
+      const parsedResponse = await locResponse.json()
+
+      await this.setState({
+        locs: [...this.state.locs, parsedResponse ]
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
@@ -343,7 +379,9 @@ class HomeContainer extends Component {
               } />
             <Route exact path="/bookings/:id" component={BookingDetail} />
             <Route exact path="/locations" render={
-              props => <LocationsContainer {...props} locs={this.state.locs} />
+              props => <LocationsContainer {...props} 
+                locs={this.state.locs}
+                addLocation={this.addLocation} />
               } />
             <Route exact path="/locations/:id" component={LocationDetail} />
             <Route exact path="/" component={LandingContainer} />
