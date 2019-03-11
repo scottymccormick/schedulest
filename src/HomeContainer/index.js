@@ -222,9 +222,42 @@ class HomeContainer extends Component {
       bookings: newBookingsState
     })
   }
-  deleteBooking = e => {
-    e.preventDefault()
-    console.log('reached delete')
+  deleteBooking = async (bookingId, locationId, e) => {
+    try {
+      e.preventDefault()
+      const token = localStorage.getItem('jwtToken')
+      const deleteResponse = await fetch(`http://localhost:9000/api/v1/bookings/${bookingId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!deleteResponse.ok) {
+        throw Error(deleteResponse.statusText)
+      }
+
+      console.log(deleteResponse)
+      // remove from state
+      const locIdx = this.state.bookings.findIndex((location) => {
+        return locationId === location.info._id
+      })
+      const updatedLocation = this.state.bookings[locIdx].bookings.filter(
+        (booking) => booking._id !== bookingId
+      )
+      const newBookingsState = this.state.bookings
+      newBookingsState[locIdx].bookings = updatedLocation
+      this.setState({
+        bookings: newBookingsState
+      })
+
+      // console.log(parsedResponse)
+      console.log(bookingId, locationId)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
   render() {
     const { classes } = this.props
