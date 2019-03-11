@@ -128,7 +128,7 @@ class HomeContainer extends Component {
                 onClose={this.handleClose}
               >
                 <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>Log Out</MenuItem>
+                <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>
               
             </div>

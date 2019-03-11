@@ -47,6 +47,13 @@ class App extends Component {
     }
     
   }
+  handleLogout = e => {
+    localStorage.removeItem('jwtToken')
+    this.setState({
+      logged: false,
+      user: null
+    })
+  }
   componentDidMount = async () => {
     console.log('should test for login here')
     try {
@@ -84,7 +91,7 @@ class App extends Component {
         <Typography variant="h3">Schedulest</Typography>
         <Route path="/" render={ props =>
           this.state.logged ?
-          <HomeContainer {...props} /> :
+          <HomeContainer {...props} handleLogout={this.handleLogout}/> :
           <LoginContainer {...props} handleLogin={this.handleLogin} />
           } />
       </div>
