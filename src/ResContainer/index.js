@@ -98,18 +98,44 @@ class ResContainer extends Component {
     this.setState({showBookingDialog: false})
   }
   generateEventList = (listItemClass) => {
-    return events.map(({id, title, resourceId}, idx) => {
-      const location = locations.find((loc) => loc.id === resourceId )
+    console.log('generate event list')
+    console.log('locs', this.props.locs)
+    console.log(this.props.bookings)
+
+    return this.props.bookings.map((location, idx) => {
       return (
-        <RouterLink key={idx} to={`/bookings/${id}`} className={listItemClass}>
-          <ListItem button >
-            <ListItemText>
-              {title} ({location.name})
-            </ListItemText>
-          </ListItem>
-        </RouterLink>
-        )
+        <div key={idx}>
+          <Typography variant="h5">
+            {(this.props.locs.find((loc) => loc._id === location[0].location)).name}
+          </Typography>
+          {location.map(({_id, title, owner, startTime, endTime, price}) => {
+            return (
+              <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
+                  <ListItem button >
+                    <ListItemText>
+                      {title} ({owner}) {price}
+                    </ListItemText>
+                  </ListItem>
+                </RouterLink>
+                )
+              })
+            }
+        </div>
+      ) 
     })
+
+    // return this.props.bookings.map(({_id, title, location}, idx) => {
+    //   // const location = locations.find((loc) => loc.id === resourceId )
+    //   return (
+    //     <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
+    //       <ListItem button >
+    //         <ListItemText>
+    //           {title} ({location.name})
+    //         </ListItemText>
+    //       </ListItem>
+    //     </RouterLink>
+    //     )
+    // })
   }
   componentDidMount() {
     if (this.props.location.state) {
@@ -121,6 +147,7 @@ class ResContainer extends Component {
   }
   render() {
     const { classes } = this.props
+    
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -150,7 +177,7 @@ class ResContainer extends Component {
             </div> : 
             <div>
               <List component="nav">
-                {this.generateEventList(classes.listItem)}
+                {this.props.bookings ? this.generateEventList(classes.listItem) : null}
               </List>
             </div>
           }

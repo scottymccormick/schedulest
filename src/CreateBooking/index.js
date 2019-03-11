@@ -64,6 +64,8 @@ class BookingDialog extends Component {
 
       console.log(parsedResponse)
 
+      this.props.onClose()
+
     } catch (error) {
       console.log(error)
     }
