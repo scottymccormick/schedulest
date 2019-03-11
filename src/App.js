@@ -53,7 +53,6 @@ class App extends Component {
       orgId: ''
     })
   }
-  
   componentDidMount = async () => {
     try {
       if (!this.state.logged) {

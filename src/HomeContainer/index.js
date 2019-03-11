@@ -79,7 +79,8 @@ class HomeContainer extends Component {
       orgName: '',
       orgId: '',
       users: [],
-      locs: []
+      locs: [],
+      bookings: []
     }
   }
   handleProfileMenu = e => {

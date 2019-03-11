@@ -91,14 +91,11 @@ class BookingDialog extends Component {
     })
   }
   render() {
-    console.log(this.state)
     // const { classes } = this.props
-
     if (!this.state.createdBy) {
       this.loadUser()
       console.log('load user here')
     }
-
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>

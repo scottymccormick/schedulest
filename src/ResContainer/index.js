@@ -96,7 +96,7 @@ class ResContainer extends Component {
     return (
       location.map(({_id, title, owner, date, startTime, endTime, price}) => {
         const ownerName = (this.props.users.find((user) => user._id === owner)).name
-        const primaryText = `${ownerName} (${title}) - ${moment(date).format('LL')}`
+        const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
         return (
           <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
