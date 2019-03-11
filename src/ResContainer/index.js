@@ -89,8 +89,12 @@ class ResContainer extends Component {
   openBookingDialog = () => {
     this.setState({showBookingDialog: true})
   }
-  closeBookingDialog = () => {
+  closeBookingDialog = (newBooking) => {
     this.setState({showBookingDialog: false})
+
+    if (newBooking) {
+      this.props.addBooking(newBooking)
+    }
   }
   getBookingListItem = (location, listItemClass) => {
     return (

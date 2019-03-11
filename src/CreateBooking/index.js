@@ -37,9 +37,9 @@ class BookingDialog extends Component {
     this.setState({date})
   }
   handleTimeChange = async (label, time) => {
-    await this.setState({[label]: time})
+    await this.setState({[label]: time.toDate()})
 
-    if (this.state.startTime.isSameOrAfter(this.state.endTime)) {
+    if (this.state.startTime > (this.state.endTime)) {
       console.log('invalid')
     }
   }
@@ -64,7 +64,7 @@ class BookingDialog extends Component {
 
       console.log(parsedResponse)
 
-      this.props.onClose()
+      this.props.onClose(parsedResponse)
 
     } catch (error) {
       console.log(error)

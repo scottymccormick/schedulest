@@ -209,6 +209,19 @@ class HomeContainer extends Component {
     this.getOrgLocs()
     this.getOrgBookings()
   }
+  addBooking = (newBooking) => {
+    const locIdx = this.state.bookings.findIndex((location) => {
+      return newBooking.location === location[0].location
+    })
+    const updatedLocation = [
+      ...this.state.bookings[locIdx], newBooking
+    ]
+    const newBookingsState = this.state.bookings
+    newBookingsState[locIdx] = updatedLocation
+    this.setState({
+      bookings: newBookingsState
+    })
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
@@ -287,6 +300,7 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 users={this.state.users}
                 bookings={this.state.bookings}
+                addBooking={this.addBooking}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" component={BookingDetail} />
