@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
-import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
+import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
@@ -69,9 +69,27 @@ const page404 = () => {
   )
 }
 
-class HomeContainer extends Component {  
+class HomeContainer extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      anchorEl: null
+    }
+  }
+  handleProfileMenu = e => {
+    this.setState({
+      anchorEl: e.currentTarget
+    })
+  }
+  handleClose = () => {
+    this.setState({
+      anchorEl: null
+    })
+  }
   render() {
     const { classes } = this.props
+    const open = Boolean(this.state.anchorEl)
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -87,9 +105,32 @@ class HomeContainer extends Component {
               <IconButton>
                 <SettingsIcon className={classes.toolbarIcon} />
               </IconButton>
-              <IconButton>
-                <PersonIcon className={classes.toolbarIcon} />
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleProfileMenu}
+                color="inherit"
+              >
+                <PersonIcon />
               </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={this.state.anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                <MenuItem onClick={this.handleClose}>Log Out</MenuItem>
+              </Menu>
+              
             </div>
           </Toolbar>
         </AppBar>
