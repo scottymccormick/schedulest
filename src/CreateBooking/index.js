@@ -43,21 +43,46 @@ class BookingDialog extends Component {
       console.log('invalid')
     }
   }
-  handleSubmit = () => {
-    console.log('form submitted')
+  handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const bookingResponse = await fetch('http://localhost:9000/api/v1/bookings', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(this.state)
+      })
+
+      if (!bookingResponse.ok) {
+        throw Error(bookingResponse.statusText)
+      }
+
+      const parsedResponse = await bookingResponse.json()
+
+      console.log(parsedResponse)
+
+    } catch (error) {
+      console.log(error)
+    }
+    // console.log(this.state)
+    // console.log('form submitted')
   }
   loadUser = async () => {
     await this.setState({
-      owner: this.props.loggedInfo.user.name,
-      created_by: this.props.loggedInfo.user._id
+      owner: this.props.loggedInfo.user._id,
+      createdBy: this.props.loggedInfo.user._id
     })
   }
   render() {
     console.log(this.state)
     // const { classes } = this.props
 
-    if (!this.state.created_by) {
+    if (!this.state.createdBy) {
       this.loadUser()
+      console.log('load user here')
     }
 
     return (
