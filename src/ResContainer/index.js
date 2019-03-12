@@ -106,18 +106,24 @@ class ResContainer extends Component {
     )
   }
   generateEventList = (listItemClass) => {
-    return this.props.bookings.map((location, idx) => {
-      if (location.length === 0 ) return null
+    const locBookingMap = this.props.groupBookingsByLocation()
+    const listSections = []
 
-      return (
-        <div key={idx}>
-          <Typography variant="h6">
-            {location.info.name}
-          </Typography>
-          { this.getBookingListItem(location.bookings, listItemClass) }
-        </div>
-      ) 
-    })
+    for (const location in locBookingMap) {
+      if (locBookingMap[location].length > 0) {
+        const locationName = this.props.getLocName(location)
+        const listSection = (
+          <div key={location}>
+            <Typography variant="h6">
+              {locationName}
+            </Typography>
+            {this.getBookingListItem(locBookingMap[location], listItemClass)}
+          </div>
+        )
+        listSections.push(listSection)
+      }
+    }
+    return listSections
   }
   convertBookingsToEvents = () => {
     const events = []

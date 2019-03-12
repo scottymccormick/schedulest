@@ -79,7 +79,6 @@ class App extends Component {
       await this.setState({
         isAdmin: parsedResponse.admins.indexOf(_id) > -1
       })
-      console.log(`${name} is an admin`)
 
     } catch (error) {
       console.log(error)
@@ -110,6 +109,8 @@ class App extends Component {
             user: parsedResponse.user,
             orgId: parsedResponse.user.organizations[0]
           })
+
+          this.checkIfAdmin(parsedResponse.user)
         }
       } else {
         console.log('component did mount is logged in')

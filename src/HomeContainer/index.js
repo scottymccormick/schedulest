@@ -335,15 +335,39 @@ class HomeContainer extends Component {
   getLocBookingsByDate = async (locId, start, end) => {
     return this.callLocBookingsByDate(locId, start, end)
   }
+  groupBookingsByLocation = () => {
+    this.state.locs.sort((a, b) => {
+        const nameA = a.name.toLowerCase()
+        const nameB = b.name.toLowerCase()
+        if (nameA < nameB) return -1
+        if (nameA > nameB) return 1
+        return 0
+    })
+
+    const responseBody = {}
+    for (let i = 0; i < this.state.locs.length; i++) {
+      const location = this.state.locs[i];
+      const locBookings = this.state.bookings.filter((booking) => {
+        return booking.location === location._id
+      })
+      responseBody[location._id] = locBookings.sort(this.dateSort)
+    }
+    // keys are loc ids, values are arrays of bookings with same location
+    return responseBody
+  }
+  getLocName = (locId) => {
+    const location = this.state.locs.find((loc) => loc._id === locId)
+    return location.name
+  }
+  componentDidMount = () => {
+    if (!this.state.orgId) {
+      console.log('component did mount home container')
+      this.getOrgValues()
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
-    if (!this.state.orgId) {
-      this.getOrgValues()
-    }
-    if (this.props.loggedInfo.isAdmin === '' && this.props.loggedInfo.user) {
-      this.props.checkIfAdmin(this.props.loggedInfo.user)
-    }
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -421,6 +445,8 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 users={this.state.users}
                 bookings={this.state.bookings}
+                groupBookingsByLocation={this.groupBookingsByLocation}
+                getLocName={this.getLocName}
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
                 loggedInfo={this.props.loggedInfo} />
