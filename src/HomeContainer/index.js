@@ -377,7 +377,13 @@ class HomeContainer extends Component {
                 deleteBooking={this.deleteBooking}
                 loggedInfo={this.props.loggedInfo} />
               } />
-            <Route exact path="/bookings/:id" component={BookingDetail} />
+            <Route exact path="/bookings/:id" render={
+              props => <BookingDetail {...props}
+                locs={this.state.locs}
+                users={this.state.users}
+                bookings={this.state.bookings}
+                loggedInfo={this.props.loggedInfo} />
+              } />
             <Route exact path="/locations" render={
               props => <LocationsContainer {...props} 
                 locs={this.state.locs}

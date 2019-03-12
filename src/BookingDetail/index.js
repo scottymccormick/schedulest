@@ -22,6 +22,7 @@ const styles = theme => ({
 
 const BookingDetail = (props) => {
   const { classes } = props
+  const bookingDetail = props.match.params.id
   return (
     <main>
       <div className={classes.headerDiv}>
@@ -39,8 +40,8 @@ const BookingDetail = (props) => {
         <Typography>
           Owner
         </Typography>
-        <Typography>
-          Time
+        <Typography variant="body1">
+          Time: {props.match.params.id}
         </Typography>
         <Typography>
           Location
