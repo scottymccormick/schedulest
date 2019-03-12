@@ -81,7 +81,7 @@ class ResContainer extends Component {
   getBookingListItem = (bookings, listItemClass) => {
     return (
       bookings.map(({_id, title, owner, date, startTime, endTime, location}) => {
-        const ownerName = (this.props.users.find((user) => user._id === owner)).name
+        const ownerName = this.props.getUserName(owner)
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
         return (

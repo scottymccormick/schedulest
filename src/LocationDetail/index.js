@@ -50,19 +50,19 @@ class LocationDetail extends Component {
     const locInfo = this.props.locs.find((loc) => loc._id === locId)
     this.setState({locInfo})
   }
-  getOwnerName = (ownerId) => {
-    const ownerData = this.props.users.find((user) => 
-      user._id === ownerId
-    )
-    return ownerData.name
-  }
+  // getOwnerName = (ownerId) => {
+  //   const ownerData = this.props.users.find((user) => 
+  //     user._id === ownerId
+  //   )
+  //   return ownerData.name
+  // }
   generateListItems = () => {
     if (this.state.locBookings && this.props.users) {
       const listItems = []
       for (const date in this.state.locBookings) {
 
         const {title, startTime, endTime, owner} = this.state.locBookings[date][0]
-        const ownerName = this.getOwnerName(owner)
+        const ownerName = this.props.getUserName(owner)
 
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`

@@ -216,17 +216,9 @@ class HomeContainer extends Component {
     return 0
   }
   addBooking = (newBooking) => {
-    const locIdx = this.state.bookings.findIndex((location) => {
-      return newBooking.location === location.info._id
-    })
-    const updatedLocation = [
-      ...this.state.bookings[locIdx].bookings, newBooking
-    ]
-    updatedLocation.sort(this.dateSort)
-    const newBookingsState = this.state.bookings
-    newBookingsState[locIdx].bookings = updatedLocation
+    const newBookingsState = [...this.state.bookings, newBooking]
     this.setState({
-      bookings: newBookingsState
+      bookings: newBookingsState.sort(this.dateSort)
     })
   }
   deleteBooking = async (bookingId, locationId, e) => {
@@ -245,22 +237,9 @@ class HomeContainer extends Component {
         throw Error(deleteResponse.statusText)
       }
 
-      console.log(deleteResponse)
-      // remove from state
-      const locIdx = this.state.bookings.findIndex((location) => {
-        return locationId === location.info._id
-      })
-      const updatedLocation = this.state.bookings[locIdx].bookings.filter(
-        (booking) => booking._id !== bookingId
-      )
-      const newBookingsState = this.state.bookings
-      newBookingsState[locIdx].bookings = updatedLocation
       this.setState({
-        bookings: newBookingsState
+        bookings: this.state.bookings.filter(b => b._id !== bookingId)
       })
-
-      // console.log(parsedResponse)
-      console.log(bookingId, locationId)
 
     } catch (error) {
       console.log(error)
@@ -359,6 +338,10 @@ class HomeContainer extends Component {
     const location = this.state.locs.find((loc) => loc._id === locId)
     return location.name
   }
+  getUserName = (userId) => {
+    const user = this.state.users.find((user) => user._id === userId)
+    return user.name
+  }
   componentDidMount = () => {
     if (!this.state.orgId) {
       console.log('component did mount home container')
@@ -447,6 +430,7 @@ class HomeContainer extends Component {
                 bookings={this.state.bookings}
                 groupBookingsByLocation={this.groupBookingsByLocation}
                 getLocName={this.getLocName}
+                getUserName={this.getUserName}
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
                 loggedInfo={this.props.loggedInfo} />
@@ -468,6 +452,7 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 users={this.state.users}
                 loggedInfo={this.props.loggedInfo}
+                getUserName={this.getUserName}
                 getLocBookingsByDate={this.getLocBookingsByDate} />
               } />
             <Route exact path="/" component={LandingContainer} />
