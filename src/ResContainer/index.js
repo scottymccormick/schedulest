@@ -49,23 +49,23 @@ const styles = theme => ({
   }
 });
 
-const events = [
-  {
-    id: 0,
-    title: 'Trombone lesson',
-    start: new Date(2019, 2, 7, 9, 0, 0),
-    end: new Date(2019, 2, 7, 11, 0, 0),
-    resourceId: 1,
-  },
-  {
-    id: 1,
-    title: 'Band practice',
-    allDay: true,
-    start: new Date(2019, 2, 8, 14, 0, 0),
-    end: new Date(2019, 2, 8, 15, 0, 0),
-    resourceId: 2,
-  }
-]
+// const events = [
+//   {
+//     id: 0,
+//     title: 'Trombone lesson',
+//     start: new Date(2019, 2, 7, 9, 0, 0),
+//     end: new Date(2019, 2, 7, 11, 0, 0),
+//     resourceId: 1,
+//   },
+//   {
+//     id: 1,
+//     title: 'Band practice',
+//     allDay: true,
+//     start: new Date(2019, 2, 8, 14, 0, 0),
+//     end: new Date(2019, 2, 8, 15, 0, 0),
+//     resourceId: 2,
+//   }
+// ]
 
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
@@ -137,6 +137,23 @@ class ResContainer extends Component {
       ) 
     })
   }
+  convertBookingsToEvents = () => {
+    const events = []
+    console.log(this.props.bookings)
+    this.props.bookings.map(({info, bookings}, idx) => {
+      return bookings.map((booking) => {
+        return events.push({
+          id: booking._id,
+          title: this.props.users.find((user) => user._id === booking.owner).name,
+          allDay: false,
+          start: moment(booking.startTime).toDate(),
+          end: moment(booking.endTime).toDate(),
+          resourceId: info._id,
+        })
+      })
+    })
+    return events
+  }
   componentDidMount() {
     if (this.props.location.state) {
       const { showBookingDialog } = this.props.location.state
@@ -167,7 +184,7 @@ class ResContainer extends Component {
           {this.state.showCalendar ?
             <div>
               <BigCalendar
-              events={events}
+              events={this.props.bookings ? this.convertBookingsToEvents() : []}
               views={allViews}
               step={60}
               showMultiDayTimes
