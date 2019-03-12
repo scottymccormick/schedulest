@@ -209,6 +209,11 @@ class HomeContainer extends Component {
     this.getOrgLocs()
     this.getOrgBookings()
   }
+  dateSort = (a, b) => {
+    if (a.date < b.date) return -1
+    if (a.date > b.date) return 1
+    return 0
+  }
   addBooking = (newBooking) => {
     const locIdx = this.state.bookings.findIndex((location) => {
       return newBooking.location === location.info._id
@@ -216,6 +221,7 @@ class HomeContainer extends Component {
     const updatedLocation = [
       ...this.state.bookings[locIdx].bookings, newBooking
     ]
+    updatedLocation.sort(this.dateSort)
     const newBookingsState = this.state.bookings
     newBookingsState[locIdx].bookings = updatedLocation
     this.setState({
