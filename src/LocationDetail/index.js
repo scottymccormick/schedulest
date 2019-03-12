@@ -50,12 +50,6 @@ class LocationDetail extends Component {
     const locInfo = this.props.locs.find((loc) => loc._id === locId)
     this.setState({locInfo})
   }
-  // getOwnerName = (ownerId) => {
-  //   const ownerData = this.props.users.find((user) => 
-  //     user._id === ownerId
-  //   )
-  //   return ownerData.name
-  // }
   generateListItems = () => {
     if (this.state.locBookings && this.props.users) {
       const listItems = []

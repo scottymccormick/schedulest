@@ -125,23 +125,6 @@ class ResContainer extends Component {
     }
     return listSections
   }
-  convertBookingsToEvents = () => {
-    const events = []
-    console.log(this.props.bookings)
-    this.props.bookings.map(({info, bookings}, idx) => {
-      return bookings.map((booking) => {
-        return events.push({
-          id: booking._id,
-          title: this.props.users.find((user) => user._id === booking.owner).name,
-          allDay: false,
-          start: moment(booking.startTime).toDate(),
-          end: moment(booking.endTime).toDate(),
-          resourceId: info._id,
-        })
-      })
-    })
-    return events
-  }
   componentDidMount() {
     if (this.props.location.state) {
       const { showBookingDialog } = this.props.location.state
@@ -172,7 +155,7 @@ class ResContainer extends Component {
           {this.state.showCalendar ?
             <div>
               <BigCalendar
-              events={this.props.bookings ? this.convertBookingsToEvents() : []}
+              events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
               views={allViews}
               step={60}
               showMultiDayTimes

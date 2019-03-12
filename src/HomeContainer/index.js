@@ -246,10 +246,6 @@ class HomeContainer extends Component {
     }
   }
   addLocation = async (locationData) => {
-    console.log(locationData)
-
-    
-    // post location to api
     try {
       const requestBody = {
         ...locationData,
@@ -342,6 +338,18 @@ class HomeContainer extends Component {
     const user = this.state.users.find((user) => user._id === userId)
     return user.name
   }
+  convertBookingsToEvents = (bookings) => {
+    return bookings.map((booking, idx) => {
+      return {
+        id: booking._id,
+        title: this.getUserName(booking.owner),
+        allDay: false,
+        start: moment(booking.startTime).toDate(),
+        end: moment(booking.endTime).toDate(),
+        resourceId: booking.location,
+      }
+    })
+  }
   componentDidMount = () => {
     if (!this.state.orgId) {
       console.log('component did mount home container')
@@ -433,6 +441,7 @@ class HomeContainer extends Component {
                 getUserName={this.getUserName}
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
+                convertBookingsToEvents={this.convertBookingsToEvents}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" render={
