@@ -62,7 +62,8 @@ class ResContainer extends Component {
 
     this.state = {
       showCalendar: false,
-      showBookingDialog: false
+      showBookingDialog: false,
+      bookingsByDate: null
     }
   }
   toggleCalendar = () => {
@@ -132,10 +133,10 @@ class ResContainer extends Component {
         this.setState({showBookingDialog})
       }
     }
-    
   }
   render() {
     const { classes } = this.props
+    console.log(this.state)
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -164,7 +165,7 @@ class ResContainer extends Component {
               className={classes.calendar} /> 
             </div> : 
             <div>
-              <List component="nav">
+              <List component="nav" dense>
                 {this.props.bookings ? this.generateEventList(classes.listItem) : null}
               </List>
             </div>
@@ -176,6 +177,7 @@ class ResContainer extends Component {
           locs={this.props.locs}
           users={this.props.users}
           loggedInfo={this.props.loggedInfo}
+          bookingsByDate={this.props.bookingsByDate}
           />
       </main>
     )

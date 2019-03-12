@@ -334,8 +334,9 @@ class HomeContainer extends Component {
   }
   groupBookingsByDate = (bookings) => {
     const dateBookingsMap = {}
-    console.log(bookings)
-    bookings.map(booking => {
+    const thisBookings = bookings || this.state.bookings
+
+    thisBookings.map(booking => {
       const bookingDate = moment(booking.date).toDate().toDateString()
       const existingArr = dateBookingsMap[bookingDate] || []
       dateBookingsMap[bookingDate] = [...existingArr, booking]
@@ -452,6 +453,7 @@ class HomeContainer extends Component {
                 users={this.state.users}
                 bookings={this.state.bookings}
                 groupBookingsByLocation={this.groupBookingsByLocation}
+                bookingsByDate={this.groupBookingsByDate()}
                 getLocName={this.getLocName}
                 getUserName={this.getUserName}
                 addBooking={this.addBooking}

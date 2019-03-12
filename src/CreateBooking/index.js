@@ -32,9 +32,13 @@ class BookingDialog extends Component {
     this.setState({
       [e.target.name]: e.target.value
     })
+
+    // validate
+    this.handleValidate()
   }
   handleDateChange = (date) => {
     this.setState({date})
+    this.handleValidate()
   }
   handleTimeChange = async (label, time) => {
     await this.setState({[label]: time.toDate()})
@@ -42,6 +46,10 @@ class BookingDialog extends Component {
     if (this.state.startTime > (this.state.endTime)) {
       console.log('invalid')
     }
+    this.handleValidate()
+  }
+  handleValidate = () => {
+    console.log('validate handled')
   }
   handleSubmit = async () => {
     try {
@@ -98,7 +106,7 @@ class BookingDialog extends Component {
   }
   render() {
     // const { classes } = this.props
-    
+    console.log(this.props)
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
