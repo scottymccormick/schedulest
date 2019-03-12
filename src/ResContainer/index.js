@@ -49,24 +49,6 @@ const styles = theme => ({
   }
 });
 
-// const events = [
-//   {
-//     id: 0,
-//     title: 'Trombone lesson',
-//     start: new Date(2019, 2, 7, 9, 0, 0),
-//     end: new Date(2019, 2, 7, 11, 0, 0),
-//     resourceId: 1,
-//   },
-//   {
-//     id: 1,
-//     title: 'Band practice',
-//     allDay: true,
-//     start: new Date(2019, 2, 8, 14, 0, 0),
-//     end: new Date(2019, 2, 8, 15, 0, 0),
-//     resourceId: 2,
-//   }
-// ]
-
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 // Create different calendars
@@ -126,7 +108,7 @@ class ResContainer extends Component {
   generateEventList = (listItemClass) => {
     return this.props.bookings.map((location, idx) => {
       if (location.length === 0 ) return null
-      console.log('location', location)
+
       return (
         <div key={idx}>
           <Typography variant="h6">

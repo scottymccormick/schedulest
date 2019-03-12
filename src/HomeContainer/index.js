@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
-import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon, VerifiedUser } from '@material-ui/icons';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
 import LandingContainer from '../LandingContainer';
@@ -301,6 +301,9 @@ class HomeContainer extends Component {
     if (!this.state.orgId) {
       this.getOrgValues()
     }
+    if (this.props.loggedInfo.isAdmin === '' && this.props.loggedInfo.user) {
+      this.props.checkIfAdmin(this.props.loggedInfo.user)
+    }
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -313,6 +316,11 @@ class HomeContainer extends Component {
             </RouterLink>
             <div className={classes.grow}></div>
             <div>
+              {this.props.loggedInfo.isAdmin ? 
+                <IconButton color="inherit">
+                  <VerifiedUser /> <Typography color="inherit">Admin</Typography>
+                </IconButton>
+                : null}
               <IconButton>
                 <SettingsIcon className={classes.toolbarIcon} />
               </IconButton>
