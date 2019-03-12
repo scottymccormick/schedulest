@@ -37,7 +37,7 @@ const LocationDetail = (props) => {
           const secondaryText = `${moment(booking.startTime).format('LT')} - ${moment(booking.endTime).format('LT')}`
           console.log('props.users', props.users)
           return (
-            <ListItem>
+            <ListItem key={booking._id}>
               <ListItemText primary={primaryText} secondary={secondaryText} />
             </ListItem>
           )

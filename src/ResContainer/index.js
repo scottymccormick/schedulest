@@ -136,6 +136,32 @@ class ResContainer extends Component {
     })
     return events
   }
+  getLocBookingsByDate = async (locId) => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const urlString = `http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}&loc=${locId}&groupBy=date`
+      const bookingResponse = await fetch(urlString,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      
+      if (!bookingResponse.ok) {
+        throw Error(bookingResponse.statusText)
+      }
+
+      const parsedResponse = await bookingResponse.json()
+
+      console.log(parsedResponse)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
   componentDidMount() {
     if (this.props.location.state) {
       const { showBookingDialog } = this.props.location.state
@@ -143,10 +169,10 @@ class ResContainer extends Component {
         this.setState({showBookingDialog})
       }
     }
+    
   }
   render() {
     const { classes } = this.props
-    
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -154,6 +180,9 @@ class ResContainer extends Component {
             <Button variant="contained" color="default" className={classes.headerButton} onClick={this.toggleCalendar} >Hide Calendar</Button> : 
             <Button variant="contained" color="default" className={classes.headerButton} onClick={this.toggleCalendar} >Show Calendar</Button> 
           }
+          { this.props.loggedInfo.orgId ?
+            <Button onClick={this.getLocBookingsByDate.bind(null, '5c86c1f003517f7c305b5483')}>Call Request</Button>
+            : null }
           <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
