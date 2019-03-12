@@ -26,6 +26,8 @@ const styles = theme => ({
 
 const LocationDetail = (props) => {
   const { classes } = props
+  const bookings = props.bookings.find((booking) => booking.info._id === props.match.params.id)
+  console.log(bookings)
   console.log('Chosen ID', props.match.params.id)
   return (
     <main className={classes.root}>

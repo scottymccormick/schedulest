@@ -397,7 +397,12 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 addLocation={this.addLocation} />
               } />
-            <Route exact path="/locations/:id" component={LocationDetail} />
+            <Route exact path="/locations/:id" render={
+              props => <LocationDetail {...props}
+                locs={this.state.locs}
+                bookings={this.state.bookings}
+                loggedInfo={this.props.loggedInfo} />
+              } />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
           </Switch>
