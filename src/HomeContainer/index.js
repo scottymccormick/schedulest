@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon, VerifiedUser } from '@material-ui/icons';
+import moment from 'moment';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
 import LandingContainer from '../LandingContainer';
@@ -301,6 +302,39 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
+  callLocBookingsByDate = async (locId, start, end) => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const startDate = start || moment().day(1).startOf('day').toString()
+      const endDate = end || moment().day(7).endOf('day').toString()
+      const urlString = `http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}&loc=${locId}&groupBy=date&from=${startDate}&to=${endDate}`
+      const bookingResponse = await fetch(urlString,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      
+      if (!bookingResponse.ok) {
+        throw Error(bookingResponse.statusText)
+      }
+
+      const parsedResponse = await bookingResponse.json()
+
+      console.log(parsedResponse)
+
+      return parsedResponse
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getLocBookingsByDate = async (locId, start, end) => {
+    return this.callLocBookingsByDate(locId, start, end)
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
@@ -407,8 +441,8 @@ class HomeContainer extends Component {
               props => <LocationDetail {...props}
                 locs={this.state.locs}
                 users={this.state.users}
-                bookings={this.state.bookings}
-                loggedInfo={this.props.loggedInfo} />
+                loggedInfo={this.props.loggedInfo}
+                getLocBookingsByDate={this.getLocBookingsByDate} />
               } />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
