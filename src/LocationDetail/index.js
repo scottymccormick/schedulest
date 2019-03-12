@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
-import { Typography, Paper, Button } from '@material-ui/core'
+import { Typography, Paper, Button, List, ListItem, ListItemText } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
+import moment from 'moment'
 
 const styles = theme => ({
   root: {
@@ -26,9 +27,32 @@ const styles = theme => ({
 
 const LocationDetail = (props) => {
   const { classes } = props
-  const bookings = props.bookings.find((booking) => booking.info._id === props.match.params.id)
-  console.log(bookings)
-  console.log('Chosen ID', props.match.params.id)
+  const locBookings = props.bookings.find((bookings) => bookings.info._id === props.match.params.id)
+  const getBookingItems = () => { 
+    if (locBookings) {
+      return (
+        locBookings.bookings.map((booking) => {
+          const ownerName = (props.users.find((user) => user._id === booking.owner)).name
+          const primaryText = `${ownerName} ${booking.title ? `(${booking.title})` : ''} - ${moment(booking.date).format('LL')}`
+          const secondaryText = `${moment(booking.startTime).format('LT')} - ${moment(booking.endTime).format('LT')}`
+          console.log('props.users', props.users)
+          return (
+            <ListItem>
+              <ListItemText primary={primaryText} secondary={secondaryText} />
+            </ListItem>
+          )
+        })
+      )
+    } else {
+      return (
+        <Typography variant="h5">
+          No Bookings Found
+        </Typography>
+      )
+    }
+  }
+  
+  console.log('Chosen locs', locBookings)
   return (
     <main className={classes.root}>
       <div className={classes.headerDiv}>
@@ -39,13 +63,16 @@ const LocationDetail = (props) => {
           </Button>
         </RouterLink>
         <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
-          Studio X
+          {locBookings ? locBookings.info.name : null}
         </Typography>
       </div>
       <Paper className={classes.paperArea}>
         <Typography>
-          Location Details
+          Description: {locBookings ? locBookings.info.description : null}
         </Typography>
+        <List>
+          {getBookingItems()}
+        </List>
       </Paper>
     </main>
   )

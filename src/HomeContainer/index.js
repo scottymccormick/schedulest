@@ -400,6 +400,7 @@ class HomeContainer extends Component {
             <Route exact path="/locations/:id" render={
               props => <LocationDetail {...props}
                 locs={this.state.locs}
+                users={this.state.users}
                 bookings={this.state.bookings}
                 loggedInfo={this.props.loggedInfo} />
               } />
