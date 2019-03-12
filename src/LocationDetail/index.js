@@ -30,45 +30,55 @@ class LocationDetail extends Component {
     super(props)
 
     this.state = {
-      locBookings: [],
+      locBookings: null,
       locInfo: null
     }
     
   }
   getBookingItems = () => { 
     const locId = this.props.match.params.id
-    
-    console.log('locs', this.props.locs)
-    this.props.getLocBookingsByDate(locId).then((result) => 
-      this.setState({
-        locBookings: result
-      })
-    )
+    const bookingsByLocation = this.props.groupBookingsByLocation()
+    const bookingThisLocation = bookingsByLocation[locId]
+    const locBookingsByDate = this.props.groupBookingsByDate(bookingThisLocation)
+    // this.setState({locBookingsByDate})
+    return locBookingsByDate
   }
   getLocInfo = () => {
     const locId = this.props.match.params.id
     const locInfo = this.props.locs.find((loc) => loc._id === locId)
-    this.setState({locInfo})
+    // this.setState({locInfo})
+    return locInfo
   }
   generateListItems = () => {
-    if (this.state.locBookings && this.props.users) {
-      const listItems = []
-      for (const date in this.state.locBookings) {
 
-        const {title, startTime, endTime, owner} = this.state.locBookings[date][0]
-        const ownerName = this.props.getUserName(owner)
-
-        const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
-        const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
-        const listItem = (
-          <ListItem key={date}>
-            <ListItemText primary={primaryText} secondary={secondaryText} />
-          </ListItem>
+    const locBookings = this.getBookingItems()
+    const locInfo = this.getLocInfo()
+    console.log(locBookings)
+    const listSection = []
+    if (Object.entries(locBookings).length > 0) {
+      // const dateSection = []
+      for (const date in locBookings) {
+        const dateSection = (
+          <div key={date}>
+            <Typography variant="h6">{date}</Typography>
+            {locBookings[date].map(booking => {
+              const {title, startTime, endTime, owner} = locBookings[date][0]
+              const ownerName = this.props.getUserName(owner)
+              
+              const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
+              const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
+              return (
+                <ListItem key={booking._id}>
+                  <ListItemText primary={primaryText} secondary={secondaryText} />
+                </ListItem>
+              )
+            })}
+          </div>
         )
-
-        listItems.push(listItem)
+        listSection.push(dateSection)
       }
-      return listItems
+      console.log(listSection)
+      return listSection
     } else {
       return (
         <Typography variant="h5">
@@ -76,12 +86,6 @@ class LocationDetail extends Component {
         </Typography>
       )
     }
-  }
-  componentDidMount = () => {
-    console.log('getting bookings items')
-    console.log(this.props)
-    this.getBookingItems()
-    this.getLocInfo()
   }
   render() {
     const { classes } = this.props
@@ -105,7 +109,7 @@ class LocationDetail extends Component {
             Description: {this.state.locInfo ? this.state.locInfo.description : null}
           </Typography>
           <List>
-            {this.generateListItems()}
+            {this.props.locs.length > 0 ? this.generateListItems() : null}
           </List>
         </Paper>
       </main>

@@ -215,6 +215,11 @@ class HomeContainer extends Component {
     if (a.date > b.date) return 1
     return 0
   }
+  timeSort = (a, b) => {
+    if (a.startTime < b.startTime) return -1
+    if (a.startTime > b.startTime) return 1
+    return 0
+  }
   addBooking = (newBooking) => {
     const newBookingsState = [...this.state.bookings, newBooking]
     this.setState({
@@ -277,58 +282,68 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
-  callLocBookingsByDate = async (locId, start, end) => {
-    try {
-      const token = localStorage.getItem('jwtToken')
-      const startDate = start || moment().day(1).startOf('day').toString()
-      const endDate = end || moment().day(7).endOf('day').toString()
-      const urlString = `http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}&loc=${locId}&groupBy=date&from=${startDate}&to=${endDate}`
-      const bookingResponse = await fetch(urlString,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      )
-      
-      if (!bookingResponse.ok) {
-        throw Error(bookingResponse.statusText)
-      }
-
-      const parsedResponse = await bookingResponse.json()
-
-      console.log(parsedResponse)
-
-      return parsedResponse
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  getLocBookingsByDate = async (locId, start, end) => {
-    return this.callLocBookingsByDate(locId, start, end)
-  }
+  // callLocBookingsByDate = async (locId, start, end) => {
+  //   try {
+  //     const token = localStorage.getItem('jwtToken')
+  //     const startDate = start || moment().day(1).startOf('day').toString()
+  //     const endDate = end || moment().day(7).endOf('day').toString()
+  //     const urlString = `http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}&loc=${locId}&groupBy=date&from=${startDate}&to=${endDate}`
+  //     const bookingResponse = await fetch(urlString,
+  //       {
+  //         method: 'GET',
+  //         credentials: 'include',
+  //         headers: {
+  //           'Authorization': `Bearer ${token}`
+  //         }
+  //       }
+  //     )
+  //     if (!bookingResponse.ok) {
+  //       throw Error(bookingResponse.statusText)
+  //     }
+  //     const parsedResponse = await bookingResponse.json()
+  //     console.log(parsedResponse)
+  //     return parsedResponse
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+  // getLocBookingsByDate = async (locId, start, end) => {
+  //   return this.callLocBookingsByDate(locId, start, end)
+  // }
   groupBookingsByLocation = () => {
-    this.state.locs.sort((a, b) => {
-        const nameA = a.name.toLowerCase()
-        const nameB = b.name.toLowerCase()
-        if (nameA < nameB) return -1
-        if (nameA > nameB) return 1
-        return 0
+    const sortedLocs = this.state.locs
+    sortedLocs.sort((a, b) => {
+      const nameA = a.name.toLowerCase()
+      const nameB = b.name.toLowerCase()
+      if (nameA < nameB) return -1
+      if (nameA > nameB) return 1
+      return 0
     })
 
     const responseBody = {}
-    for (let i = 0; i < this.state.locs.length; i++) {
-      const location = this.state.locs[i];
+    for (let i = 0; i < sortedLocs.length; i++) {
+      const location = sortedLocs[i];
       const locBookings = this.state.bookings.filter((booking) => {
         return booking.location === location._id
       })
       responseBody[location._id] = locBookings.sort(this.dateSort)
     }
+    console.log(responseBody)
     // keys are loc ids, values are arrays of bookings with same location
     return responseBody
+  }
+  groupBookingsByDate = (bookings) => {
+    const dateBookingsMap = {}
+    console.log(bookings)
+    bookings.map(booking => {
+      const bookingDate = moment(booking.date).toDate().toDateString()
+      const existingArr = dateBookingsMap[bookingDate] || []
+      dateBookingsMap[bookingDate] = [...existingArr, booking]
+    })
+    for (let date in dateBookingsMap) {
+      dateBookingsMap[date] = dateBookingsMap[date].sort(this.timeSort)
+    }
+    return dateBookingsMap
   }
   getLocName = (locId) => {
     const location = this.state.locs.find((loc) => loc._id === locId)
@@ -458,11 +473,13 @@ class HomeContainer extends Component {
               } />
             <Route exact path="/locations/:id" render={
               props => <LocationDetail {...props}
+                getUserName={this.getUserName}
                 locs={this.state.locs}
+                bookings={this.state.bookings}
                 users={this.state.users}
                 loggedInfo={this.props.loggedInfo}
-                getUserName={this.getUserName}
-                getLocBookingsByDate={this.getLocBookingsByDate} />
+                groupBookingsByLocation={this.groupBookingsByLocation}
+                groupBookingsByDate={this.groupBookingsByDate} />
               } />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
