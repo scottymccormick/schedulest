@@ -34,11 +34,10 @@ class BookingDialog extends Component {
     })
 
     // validate
-    this.handleValidate()
+    // this.handleValidate()
   }
   handleDateChange = (date) => {
     this.setState({date})
-    this.handleValidate()
   }
   handleTimeChange = async (label, time) => {
     await this.setState({[label]: time.toDate()})
@@ -46,10 +45,16 @@ class BookingDialog extends Component {
     if (this.state.startTime > (this.state.endTime)) {
       console.log('invalid')
     }
-    this.handleValidate()
+    this.handleTimeValidate(label, time)
   }
-  handleValidate = () => {
-    console.log('validate handled')
+  handleTimeValidate = (label, time) => {
+    console.log('time validate handled')
+    // validate date/time
+    if (label === 'startTime' && (this.state.startTime >= this.state.endTime)) {
+      this.setState({
+        endTime: moment(time).add(1, 'h').toDate()
+      })
+    }
   }
   handleSubmit = async () => {
     try {
