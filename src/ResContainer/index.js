@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemText, Fab } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton } from '@material-ui/core';
+import { Add as AddIcon, Delete, Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -49,28 +49,23 @@ const styles = theme => ({
   }
 });
 
-const events = [
-  {
-    id: 0,
-    title: 'Trombone lesson',
-    start: new Date(2019, 2, 7, 9, 0, 0),
-    end: new Date(2019, 2, 7, 11, 0, 0),
-    resourceId: 1,
-  },
-  {
-    id: 1,
-    title: 'Band practice',
-    allDay: true,
-    start: new Date(2019, 2, 8, 14, 0, 0),
-    end: new Date(2019, 2, 8, 15, 0, 0),
-    resourceId: 2,
-  }
-]
-
-const locations = [
-  {id: 1, name: 'Studio 1'},
-  {id: 2, name: 'Studio 2'}
-]
+// const events = [
+//   {
+//     id: 0,
+//     title: 'Trombone lesson',
+//     start: new Date(2019, 2, 7, 9, 0, 0),
+//     end: new Date(2019, 2, 7, 11, 0, 0),
+//     resourceId: 1,
+//   },
+//   {
+//     id: 1,
+//     title: 'Band practice',
+//     allDay: true,
+//     start: new Date(2019, 2, 8, 14, 0, 0),
+//     end: new Date(2019, 2, 8, 15, 0, 0),
+//     resourceId: 2,
+//   }
+// ]
 
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
@@ -94,22 +89,70 @@ class ResContainer extends Component {
   openBookingDialog = () => {
     this.setState({showBookingDialog: true})
   }
-  closeBookingDialog = () => {
+  closeBookingDialog = (newBooking) => {
     this.setState({showBookingDialog: false})
+
+    if (newBooking) {
+      this.props.addBooking(newBooking)
+    }
+  }
+  getBookingListItem = (bookings, listItemClass) => {
+    return (
+      bookings.map(({_id, title, owner, date, startTime, endTime, location}) => {
+        const ownerName = (this.props.users.find((user) => user._id === owner)).name
+        const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
+        const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
+        return (
+          <RouterLink key={_id} to={`/bookings/${_id}`} className={listItemClass}>
+            <ListItem button >
+              <ListItemText 
+                primary={primaryText}
+                secondary={secondaryText}>
+              </ListItemText>
+              <ListItemSecondaryAction>
+                <IconButton>
+                  <Edit />
+                </IconButton>
+                <IconButton aria-label="Delete" onClick={this.props.deleteBooking.bind(null, _id, location)}>
+                  <Delete />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </RouterLink>
+        )
+      })
+    )
   }
   generateEventList = (listItemClass) => {
-    return events.map(({id, title, resourceId}, idx) => {
-      const location = locations.find((loc) => loc.id === resourceId )
+    return this.props.bookings.map((location, idx) => {
+      if (location.length === 0 ) return null
+      console.log('location', location)
       return (
-        <RouterLink key={idx} to={`/bookings/${id}`} className={listItemClass}>
-          <ListItem button >
-            <ListItemText>
-              {title} ({location.name})
-            </ListItemText>
-          </ListItem>
-        </RouterLink>
-        )
+        <div key={idx}>
+          <Typography variant="h6">
+            {location.info.name}
+          </Typography>
+          { this.getBookingListItem(location.bookings, listItemClass) }
+        </div>
+      ) 
     })
+  }
+  convertBookingsToEvents = () => {
+    const events = []
+    console.log(this.props.bookings)
+    this.props.bookings.map(({info, bookings}, idx) => {
+      return bookings.map((booking) => {
+        return events.push({
+          id: booking._id,
+          title: this.props.users.find((user) => user._id === booking.owner).name,
+          allDay: false,
+          start: moment(booking.startTime).toDate(),
+          end: moment(booking.endTime).toDate(),
+          resourceId: info._id,
+        })
+      })
+    })
+    return events
   }
   componentDidMount() {
     if (this.props.location.state) {
@@ -121,6 +164,7 @@ class ResContainer extends Component {
   }
   render() {
     const { classes } = this.props
+    
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -131,7 +175,7 @@ class ResContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
             Bookings
           </Typography>
-          <Fab color="primary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
+          <Fab color="secondary" size="medium" variant="extended" aria-label="Create Booking" className={classes.fab} onClick={this.openBookingDialog}>
             <AddIcon />
             <Typography variant="button">Create Booking</Typography>
           </Fab>
@@ -140,7 +184,7 @@ class ResContainer extends Component {
           {this.state.showCalendar ?
             <div>
               <BigCalendar
-              events={events}
+              events={this.props.bookings ? this.convertBookingsToEvents() : []}
               views={allViews}
               step={60}
               showMultiDayTimes
@@ -150,12 +194,18 @@ class ResContainer extends Component {
             </div> : 
             <div>
               <List component="nav">
-                {this.generateEventList(classes.listItem)}
+                {this.props.bookings ? this.generateEventList(classes.listItem) : null}
               </List>
             </div>
           }
         </Paper>
-        <BookingDialog open={this.state.showBookingDialog} onClose={this.closeBookingDialog}/>
+        <BookingDialog 
+          open={this.state.showBookingDialog} 
+          onClose={this.closeBookingDialog}
+          locs={this.props.locs}
+          users={this.props.users}
+          loggedInfo={this.props.loggedInfo}
+          />
       </main>
     )
   }

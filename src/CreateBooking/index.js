@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
@@ -16,12 +16,13 @@ class BookingDialog extends Component {
     super()
 
     this.state = {
-      owner: 'John User',
+      owner: '',
       title: '',
       location: '',
-      date: new Date(),
-      startTime: moment().hours(9).minutes(0).seconds(0),
-      endTime: moment().hours(10).minutes(0).seconds(0),
+      created_by: '',
+      date: moment().toDate(),
+      startTime: moment().minutes(0).seconds(0).toDate(),
+      endTime: moment().add(1, 'h').minutes(0).seconds(0).toDate(),
       price: 20.00
     }
 
@@ -36,29 +37,83 @@ class BookingDialog extends Component {
     this.setState({date})
   }
   handleTimeChange = async (label, time) => {
-    await this.setState({[label]: time})
+    await this.setState({[label]: time.toDate()})
 
-    if (this.state.startTime.isSameOrAfter(this.state.endTime)) {
+    if (this.state.startTime > (this.state.endTime)) {
       console.log('invalid')
     }
   }
-  handleSubmit = () => {
-    console.log('form submitted')
+  handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const bookingResponse = await fetch('http://localhost:9000/api/v1/bookings', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(this.state)
+      })
+
+      if (!bookingResponse.ok) {
+        throw Error(bookingResponse.statusText)
+      }
+
+      const parsedResponse = await bookingResponse.json()
+
+      console.log(parsedResponse)
+
+      this.props.onClose(parsedResponse)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  loadUser = async () => {
+    await this.setState({
+      owner: this.props.loggedInfo.user._id,
+      createdBy: this.props.loggedInfo.user._id
+    })
+  }
+  getUserList = () => {
+    return this.props.users.map((user) => {
+      return (
+        <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>
+      )
+    })
+  }
+  getLocsList = () => {
+    return this.props.locs.map((loc) => {
+      return (
+        <MenuItem key={loc._id} value={loc._id}>{loc.name}</MenuItem>
+      )
+    })
   }
   render() {
-    console.log(this.state)
-    const { classes } = this.props
+    // const { classes } = this.props
+    if (!this.state.createdBy) {
+      this.loadUser()
+      console.log('load user here')
+    }
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To reserve a room, please fill out the fields below
-          </DialogContentText>
           <form action="">
             <FormControl fullWidth>
-              <TextField margin="dense" label="Name" name="owner" type="text"
-                value={this.state.owner} onChange={this.handleChange} required  />
+              <InputLabel required>Owner</InputLabel>
+              <Select
+                margin="dense"
+                value={this.state.owner}
+                onChange={this.handleChange}
+                inputProps={{
+                  name: 'owner',
+                  required: true
+                }}
+                >
+                {this.props.users ? this.getUserList() : null }
+              </Select>
             </FormControl>
             <FormControl fullWidth>
               <TextField margin="dense" label="Title (optional)" name="title"
@@ -75,12 +130,7 @@ class BookingDialog extends Component {
                   required: true
                 }}
                 >
-                <MenuItem value={0}>
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={1}>Studio 1</MenuItem>
-                <MenuItem value={2}>Studio 2</MenuItem>
-                <MenuItem value={3}>Studio 3</MenuItem>
+                {this.props.locs ? this.getLocsList() : null}
               </Select>
             </FormControl>
             <FormControl fullWidth>

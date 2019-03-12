@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
-import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
+import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
 import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
@@ -35,7 +35,8 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit
   },
   routerLink: {
     textDecoration: 'none',
@@ -69,17 +70,245 @@ const page404 = () => {
   )
 }
 
-class HomeContainer extends Component {  
+class HomeContainer extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      anchorEl: null,
+      orgName: '',
+      orgId: '',
+      users: [],
+      locs: [],
+      bookings: []
+    }
+  }
+  handleProfileMenu = e => {
+    this.setState({
+      anchorEl: e.currentTarget
+    })
+  }
+  handleClose = () => {
+    this.setState({
+      anchorEl: null
+    })
+  }
+  getOrgInfo = async () => {
+    try {
+      // fetch first organization for now
+      const token = localStorage.getItem('jwtToken')
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgResponse.ok) {
+        throw Error(orgResponse.statusText)
+      }
+
+      const parsedResponse = await orgResponse.json()
+
+      await this.setState({
+        orgName: parsedResponse.name,
+        orgId: parsedResponse._id
+      })
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getOrgUsers = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgUsersResponse = await fetch(`http://localhost:9000/api/v1/users?org=${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgUsersResponse.ok) {
+        throw Error(orgUsersResponse.statusText)
+      }
+
+      const parsedResponse = await orgUsersResponse.json()
+      
+      const formattedResponse = parsedResponse.map((user) => {
+        const {name, email, _id} = user
+        return {name, email, _id}
+      })
+
+      await this.setState({
+        users: formattedResponse
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getOrgLocs = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgLocsResponse = await fetch(`http://localhost:9000/api/v1/locs?org=${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgLocsResponse.ok) {
+        throw Error(orgLocsResponse.statusText)
+      }
+
+      const parsedResponse = await orgLocsResponse.json()
+      
+      const formattedResponse = parsedResponse.map((loc) => {
+        const {name, description, _id} = loc
+        return {name, description, _id}
+      })
+
+      await this.setState({
+        locs: formattedResponse
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getOrgBookings = async () => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgBookingsResponse = await fetch(`http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!orgBookingsResponse.ok) {
+        throw Error(orgBookingsResponse.statusText)
+      }
+
+      const parsedResponse = await orgBookingsResponse.json()
+      console.log(parsedResponse)
+
+      await this.setState({
+        bookings: parsedResponse
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  getOrgValues = async () => {
+    this.getOrgInfo()
+    this.getOrgUsers()
+    this.getOrgLocs()
+    this.getOrgBookings()
+  }
+  addBooking = (newBooking) => {
+    const locIdx = this.state.bookings.findIndex((location) => {
+      return newBooking.location === location.info._id
+    })
+    const updatedLocation = [
+      ...this.state.bookings[locIdx].bookings, newBooking
+    ]
+    const newBookingsState = this.state.bookings
+    newBookingsState[locIdx].bookings = updatedLocation
+    this.setState({
+      bookings: newBookingsState
+    })
+  }
+  deleteBooking = async (bookingId, locationId, e) => {
+    try {
+      e.preventDefault()
+      const token = localStorage.getItem('jwtToken')
+      const deleteResponse = await fetch(`http://localhost:9000/api/v1/bookings/${bookingId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!deleteResponse.ok) {
+        throw Error(deleteResponse.statusText)
+      }
+
+      console.log(deleteResponse)
+      // remove from state
+      const locIdx = this.state.bookings.findIndex((location) => {
+        return locationId === location.info._id
+      })
+      const updatedLocation = this.state.bookings[locIdx].bookings.filter(
+        (booking) => booking._id !== bookingId
+      )
+      const newBookingsState = this.state.bookings
+      newBookingsState[locIdx].bookings = updatedLocation
+      this.setState({
+        bookings: newBookingsState
+      })
+
+      // console.log(parsedResponse)
+      console.log(bookingId, locationId)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  addLocation = async (locationData) => {
+    console.log(locationData)
+
+    
+    // post location to api
+    try {
+      const requestBody = {
+        ...locationData,
+        organization: this.state.orgId
+      }
+      const token = localStorage.getItem('jwtToken')
+      const locResponse = await fetch(`http://localhost:9000/api/v1/locs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!locResponse.ok) {
+        throw Error(locResponse.statusText)
+      }
+
+      const parsedResponse = await locResponse.json()
+
+      await this.setState({
+        locs: [...this.state.locs, parsedResponse ]
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
   render() {
     const { classes } = this.props
+    const open = Boolean(this.state.anchorEl)
+    if (!this.state.orgId) {
+      this.getOrgValues()
+    }
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" color="secondary" className={classes.appBar}>
+        <AppBar position="fixed" color="primary" className={classes.appBar}>
           <Toolbar>
             <RouterLink to="/" className={classes.routerLink}>
               <Typography variant="h5" color="inherit" noWrap>
-                Schedulest | Company X
+                Schedulest | {this.state.orgName || 'Org Name Not Found'}
               </Typography>
             </RouterLink>
             <div className={classes.grow}></div>
@@ -87,9 +316,32 @@ class HomeContainer extends Component {
               <IconButton>
                 <SettingsIcon className={classes.toolbarIcon} />
               </IconButton>
-              <IconButton>
-                <PersonIcon className={classes.toolbarIcon} />
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleProfileMenu}
+                color="inherit"
+              >
+                <PersonIcon />
               </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={this.state.anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem>
+                <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
+              </Menu>
+              
             </div>
           </Toolbar>
         </AppBar>
@@ -112,11 +364,31 @@ class HomeContainer extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/users" component={UsersContainer} />
+            <Route exact path="/users" render={ 
+              props => <UsersContainer {...props} users={this.state.users} />
+              } />
             <Route exact path="/users/:id" component={UserDetail} />
-            <Route exact path="/bookings" component={ResContainer} />
-            <Route exact path="/bookings/:id" component={BookingDetail} />
-            <Route exact path="/locations" component={LocationsContainer} />
+            <Route exact path="/bookings" render={
+              props => <ResContainer {...props} 
+                locs={this.state.locs}
+                users={this.state.users}
+                bookings={this.state.bookings}
+                addBooking={this.addBooking}
+                deleteBooking={this.deleteBooking}
+                loggedInfo={this.props.loggedInfo} />
+              } />
+            <Route exact path="/bookings/:id" render={
+              props => <BookingDetail {...props}
+                locs={this.state.locs}
+                users={this.state.users}
+                bookings={this.state.bookings}
+                loggedInfo={this.props.loggedInfo} />
+              } />
+            <Route exact path="/locations" render={
+              props => <LocationsContainer {...props} 
+                locs={this.state.locs}
+                addLocation={this.addLocation} />
+              } />
             <Route exact path="/locations/:id" component={LocationDetail} />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />

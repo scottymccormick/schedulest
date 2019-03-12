@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Paper, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
+import moment from 'moment'
 
 const styles = theme => ({
   paperArea: {
@@ -20,34 +21,90 @@ const styles = theme => ({
   }
 });
 
-const BookingDetail = (props) => {
-  const { classes } = props
-  return (
-    <main>
-      <div className={classes.headerDiv}>
-        <RouterLink to="/bookings">
-          <Button variant="contained" color="default" className={classes.headerButton}>
-            <ArrowBackIos size="small" />
-            Bookings
-          </Button>
-        </RouterLink>
-        <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
-          Booking Detail
-        </Typography>
-      </div>
-      <Paper className={classes.paperArea}>
-        <Typography>
-          Owner
-        </Typography>
-        <Typography>
-          Time
-        </Typography>
-        <Typography>
-          Location
-        </Typography>
-      </Paper>
-    </main>
-  )
+class BookingDetail extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      booking: null
+    }
+  }
+  getBookingDetail = async (id) => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const bookingResponse = await fetch(`http://localhost:9000/api/v1/bookings/${id}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+  
+      if (!bookingResponse.ok) {
+        throw Error(bookingResponse.statusText)
+      }
+  
+      const parsedResponse = await bookingResponse.json()
+
+      const formattedResponse = {
+        ...parsedResponse,
+        ownerName: (this.props.users.find((user) => user._id === parsedResponse.owner)).name,
+        startTimeFormatted: moment(parsedResponse.startTime).format('LT'),
+        endTimeFormatted: moment(parsedResponse.endTime).format('LT'),
+        dateFormatted: moment(parsedResponse.date).format('LL'),
+        locationName: (this.props.locs.find((loc) => 
+          loc._id === parsedResponse.location
+        )).name
+      }
+  
+      await this.setState({
+        booking: formattedResponse
+      })
+  
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  render() {
+    const { classes } = this.props
+    if (!this.state.booking) {
+      this.getBookingDetail(this.props.match.params.id)
+    }
+    // console.log(bookingDetail)
+    return (
+      <main>
+        <div className={classes.headerDiv}>
+          <RouterLink to="/bookings">
+            <Button variant="contained" color="default" className={classes.headerButton}>
+              <ArrowBackIos size="small" />
+              Bookings
+            </Button>
+          </RouterLink>
+          <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
+            Booking Detail
+          </Typography>
+        </div>
+        {this.state.booking ? 
+          <Paper className={classes.paperArea}>
+            <Typography variant="h6">
+              {this.state.booking.ownerName}
+            </Typography>
+            <Typography variant="body1" component="p" gutterBottom>
+              {this.state.booking.locationName}
+            </Typography>
+            {this.state.booking.title ? 
+              <Typography variant="body1" component="p">
+                Title: {this.state.booking.title}
+              </Typography>
+              : null}
+            <Typography variant="body1" component="p">
+              {this.state.booking.startTimeFormatted} - {this.state.booking.endTimeFormatted}
+            </Typography>
+            
+          </Paper> : null}
+      </main>
+    )
+  }
 }
 
 export default withStyles(styles)(BookingDetail)

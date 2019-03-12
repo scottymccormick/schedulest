@@ -34,25 +34,9 @@ const styles = theme => ({
   }
 })
 
-const locations = [
-  {
-    name: 'Location 1',
-    description: 'Additional text'
-  },
-  {
-    name: 'Location 2',
-    description: 'Additional text'
-  },
-  {
-    name: 'Location 3',
-    description: 'Additional text'
-  }
-]
-
 class LocationsContainer extends Component {
   state = {
-    showCreateLocation: false,
-    locations: locations
+    showCreateLocation: false
   }
   handleLocationOpen = () => {
     this.setState({showCreateLocation: true})
@@ -61,10 +45,11 @@ class LocationsContainer extends Component {
     this.setState({showCreateLocation: false})
   }
   handleSubmit = (location) => {
-    console.log('submit handled')
-    this.setState({
-      locations: [location, ...this.state.locations]
-    })
+    this.props.addLocation(location)
+    // this.setState({
+    //   locations: [location, ...this.state.locations]
+    // })
+    // send to upper component
 
     this.handleLocationClose()
   }
@@ -72,7 +57,7 @@ class LocationsContainer extends Component {
 
     const { classes } = this.props
     
-    const locationLis = this.state.locations.map(({name, description}, idx) => {
+    const locationLis = this.props.locs.map(({name, description}, idx) => {
       return (
         <ListItem key={idx}>
           <ListItemText
