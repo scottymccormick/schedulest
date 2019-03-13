@@ -218,6 +218,9 @@ class BookingDialog extends Component {
                 onChange={this.handleTimeChange.bind(this, 'startTime')}
               />
               </MuiPickersUtilsProvider>
+              {/* <FormHelperText id="start-time-error" error>
+                this is the error text
+              </FormHelperText> */}
             </FormControl>
             {/* End Time */}
             <FormControl fullWidth>

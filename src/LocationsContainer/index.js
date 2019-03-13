@@ -87,7 +87,7 @@ class LocationsContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
-            <List>
+            <List dense>
               {locationLis}
             </List>
         </Paper>

@@ -40,23 +40,13 @@ class LocationDetail extends Component {
     const bookingsByLocation = this.props.groupBookingsByLocation()
     const bookingThisLocation = bookingsByLocation[locId]
     const locBookingsByDate = this.props.groupBookingsByDate(bookingThisLocation)
-    // this.setState({locBookingsByDate})
     return locBookingsByDate
-  }
-  getLocInfo = () => {
-    const locId = this.props.match.params.id
-    const locInfo = this.props.locs.find((loc) => loc._id === locId)
-    // this.setState({locInfo})
-    return locInfo
   }
   generateListItems = () => {
 
     const locBookings = this.getBookingItems()
-    const locInfo = this.getLocInfo()
-    console.log(locBookings)
-    const listSection = []
     if (Object.entries(locBookings).length > 0) {
-      // const dateSection = []
+      const listSection = []
       for (const date in locBookings) {
         const dateSection = (
           <div key={date}>
@@ -64,7 +54,6 @@ class LocationDetail extends Component {
             {locBookings[date].map(booking => {
               const {title, startTime, endTime, owner} = locBookings[date][0]
               const ownerName = this.props.getUserName(owner)
-              
               const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
               const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
               return (
@@ -77,7 +66,6 @@ class LocationDetail extends Component {
         )
         listSection.push(dateSection)
       }
-      console.log(listSection)
       return listSection
     } else {
       return (
@@ -106,10 +94,11 @@ class LocationDetail extends Component {
         </div>
         <Paper className={classes.paperArea}>
           <Typography>
-            Description: {this.state.locInfo ? this.state.locInfo.description : null}
+            {this.state.locInfo ? `Description: ${this.state.locInfo.description}` : null}
           </Typography>
-          <List>
-            {this.props.locs.length > 0 ? this.generateListItems() : null}
+          <List dense>
+            {/* Ensure getUserName is loaded, throwing errors */}
+            {this.props.locs.length > 0 && this.props.getUserName ? this.generateListItems() : null}
           </List>
         </Paper>
       </main>
