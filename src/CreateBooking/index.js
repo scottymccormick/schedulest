@@ -33,14 +33,11 @@ class BookingDialog extends Component {
 
   }
   handleChange = async e => {
-    console.log(e)
     await this.setState({
       [e.target.name]: e.target.value
     })
 
     this.checkOverlap()
-    // validate
-    // this.handleValidate()
   }
   handleDateChange = async (date) => {
     const start = moment(this.state.startTime)
@@ -60,6 +57,8 @@ class BookingDialog extends Component {
     await this.setState({[label]: time.toDate()})
     // should validate to make it to time cannot be set to yesterday or tomorrow
     this.handleTimeValidate(label, time)
+
+    this.setPrice()
   }
   handleTimeValidate = (label, time) => {
     console.log('time validate handled')
@@ -173,8 +172,8 @@ class BookingDialog extends Component {
       console.log('end time', endTime)
       console.log('chosen time', currentStartTime)
 
-      if (currentStartTime.isBetween(moment(startTime), moment(endTime)) || 
-        currentEndTime.isBetween(moment(startTime), moment(endTime))) {
+      if (currentStartTime.isBetween(moment(startTime), moment(endTime), 'minutes') || 
+        currentEndTime.isBetween(moment(startTime), moment(endTime), 'minutes')) {
           const formattedStart = moment(startTime).format('LT')
           const formattedEnd = moment(endTime).format('LT')
           const locData = this.props.locs.find(loc => loc._id === location)
@@ -196,6 +195,16 @@ class BookingDialog extends Component {
       overlap: ''
     }
     await this.setState({error})
+  }
+  setPrice = async () => {
+    const startTime = moment(this.state.startTime)
+    const endTime = moment(this.state.endTime)
+    const difference = endTime.diff(startTime, 'hours', true)
+    const hourlyPrice = difference * this.props.loggedInfo.hourlyRate
+    const price = hourlyPrice < this.props.loggedInfo.dayRate ? hourlyPrice : this.props.loggedInfo.dayRate
+    this.setState({
+      price
+    })
   }
   handleSubmit = async () => {
     try {
@@ -220,12 +229,17 @@ class BookingDialog extends Component {
       console.log(parsedResponse)
 
       this.props.onClose(parsedResponse)
+      this.clearState()
 
     } catch (error) {
       console.log(error)
     }
   }
   onClose = async () => {
+    this.clearState()
+    this.props.onClose()
+  }
+  clearState = async () => {
     await this.setState({
       title: '',
       location: '',
@@ -240,7 +254,6 @@ class BookingDialog extends Component {
       }
     })
     this.loadUser()
-    this.props.onClose()
   }
   loadUser = async () => {
     await this.setState({
