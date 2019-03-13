@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, FormControl, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, TextField, FormControl, FormHelperText, Select, MenuItem, InputLabel, DialogActions, Button, InputAdornment, Input } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
@@ -23,7 +23,12 @@ class BookingDialog extends Component {
       date: moment().toDate(),
       startTime: moment().minutes(0).seconds(0).toDate(),
       endTime: moment().add(1, 'h').minutes(0).seconds(0).toDate(),
-      price: 20.00
+      price: 20.00,
+      error: {
+        startTime: false,
+        endTime: false,
+        date: false
+      }
     }
 
   }
@@ -36,24 +41,69 @@ class BookingDialog extends Component {
     // validate
     // this.handleValidate()
   }
-  handleDateChange = (date) => {
-    this.setState({date})
+  handleDateChange = async (date) => {
+    const start = moment(this.state.startTime)
+    const end = moment(this.state.endTime)
+    await this.setState({
+      date,
+      startTime: moment(date).hours(start.hours()).minutes(start.minutes()).toDate(),
+      endTime: moment(date).hours(end.hours()).minutes(end.minutes()).toDate(),
+    })
   }
   handleTimeChange = async (label, time) => {
     await this.setState({[label]: time.toDate()})
-
-    if (this.state.startTime > (this.state.endTime)) {
-      console.log('invalid')
-    }
+    // should validate to make it to time cannot be set to yesterday or tomorrow
     this.handleTimeValidate(label, time)
   }
   handleTimeValidate = (label, time) => {
     console.log('time validate handled')
+    console.log(this.state)
     // validate date/time
-    if (label === 'startTime' && (this.state.startTime >= this.state.endTime)) {
+
+    // if past 11:30pm
+    if (this.state.startTime > moment(this.state.date).hours(23).minutes(30).toDate() ) {
+      console.log('too late!')
+      const error = {
+        ...this.state.error,
+        startTime: true
+      }
       this.setState({
-        endTime: moment(time).add(1, 'h').toDate()
+        error,
+        endTime: moment(this.state.startTime).add(30, 'm').toDate()
       })
+    } else if (this.state.endTime < moment(this.state.date).hours(1).minutes(0).toDate()) {
+      console.log('too early!')
+      const error = {
+        ...this.state.error,
+        endTime: true
+      }
+      this.setState({
+        error,
+        startTime: moment(this.state.endTime).subtract(30, 'm').toDate()
+      })
+
+    // if start is before 11:30pm and end is after 1:00
+    } else {
+      const error = {
+        ...this.state.error,
+        startTime: false,
+        endTime: false
+      }
+      this.setState({error})
+
+      // if start time past end time
+      if ((this.state.startTime >= this.state.endTime)) {
+        if (label === 'startTime') {
+
+          this.setState({
+            endTime: moment(this.state.startTime).add(1, 'h').toDate()
+          })
+        } else {
+          this.setState({
+            startTime: moment(this.state.endTime).subtract(1, 'h').toDate()
+          })
+        }
+      }
     }
   }
   handleSubmit = async () => {
@@ -151,18 +201,21 @@ class BookingDialog extends Component {
             </FormControl>
             <FormControl fullWidth>
               <MuiPickersUtilsProvider utils={MomentUtils}>
-                <DatePicker margin="dense" required label="Date" name="date" value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
+                <DatePicker margin="dense" required label="Date" name="date" 
+                error={this.state.error.date}
+                value={this.state.date} onChange={this.handleDateChange} minDate={new Date()} 
                 />
               </MuiPickersUtilsProvider>
             </FormControl>
             {/* Start Time */}
-            <FormControl fullWidth>
+            <FormControl fullWidth >
               <MuiPickersUtilsProvider utils={MomentUtils}>
               <TimePicker margin="dense"
+                error={this.state.error.startTime}
                 label="Start Time"
                 value={this.state.startTime}
                 minutesStep={5}
-                onChange={this.handleTimeChange.bind(null, 'startTime')}
+                onChange={this.handleTimeChange.bind(this, 'startTime')}
               />
               </MuiPickersUtilsProvider>
             </FormControl>
@@ -170,6 +223,7 @@ class BookingDialog extends Component {
             <FormControl fullWidth>
               <MuiPickersUtilsProvider utils={MomentUtils}>
               <TimePicker margin="dense"
+                error={this.state.error.endTime}
                 label="End Time"
                 value={this.state.endTime}
                 minutesStep={5}
