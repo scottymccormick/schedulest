@@ -56,14 +56,17 @@ class UsersContainer extends Component {
             primary={name}
           />
             <ListItemSecondaryAction>
+            {this.props.loggedInfo.isAdmin ? 
               <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={this.handleEdit}>
                 <EditIcon />
                 Edit User
-              </Button>
+              </Button> : null }
+              {console.log(_id)}
+            { (this.props.loggedInfo.isAdmin || this.props.loggedInfo.user._id === _id) ? 
               <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={this.handlePrint} color="secondary">
                 <ReceiptIcon />
                 Print Report
-              </Button>
+              </Button> : null }
             </ListItemSecondaryAction>
           </ListItem>
         </RouterLink>
@@ -85,12 +88,14 @@ class UsersContainer extends Component {
             {userLis}
           </List>
         </Paper>
-        <div className={classes.footerActions}>
-          <Button className={classes.button} size="medium" color="secondary" light="true" variant="contained" aria-label="Report" onClick={() => console.log('print report')}>
-            <ReceiptIcon />
-            Print All Reports
-          </Button>
-        </div>
+        {this.props.loggedInfo.isAdmin ? 
+          <div className={classes.footerActions}>
+            <Button className={classes.button} size="medium" color="secondary" light="true" variant="contained" aria-label="Report" onClick={() => console.log('print report')}>
+              <ReceiptIcon />
+              Print All Reports
+            </Button>
+          </div> : null
+        }
       </main>
     )
   }

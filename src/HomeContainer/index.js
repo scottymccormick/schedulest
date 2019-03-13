@@ -416,7 +416,9 @@ class HomeContainer extends Component {
         <main className={classes.content}>
           <Switch>
             <Route exact path="/users" render={ 
-              props => <UsersContainer {...props} users={this.state.users} />
+              props => <UsersContainer {...props} 
+                users={this.state.users}
+                loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" render={
