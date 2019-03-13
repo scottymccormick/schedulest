@@ -243,7 +243,7 @@ class BookingDialog extends Component {
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: this.props.loggedInfo.hourlyRate,
+      price: this.props.loggedInfo.hourlyRate.toFixed(2),
       error: {
         startTime: '',
         endTime: '',
@@ -277,9 +277,11 @@ class BookingDialog extends Component {
       this.loadUser()
     }
   }
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     // Set initial price once hourlyRate props are received.
-    if (prevProps.loggedInfo.hourlyRate !== this.props.loggedInfo.hourlyRate) {
+    
+    if (this.props.loggedInfo.hourlyRate && !this.state.price) {
+      console.log('setting price')
       this.setPrice(this.props.loggedInfo.hourlyRate)
     }
   }

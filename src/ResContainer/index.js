@@ -81,7 +81,7 @@ class ResContainer extends Component {
   }
   getBookingListItem = (bookings, listItemClass) => {
     return (
-      bookings.map(({_id, title, owner, date, startTime, endTime, location}) => {
+      bookings.map(({_id, title, owner, date, startTime, endTime, location, createdBy}) => {
         const ownerName = this.props.getUserName(owner)
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
@@ -93,12 +93,18 @@ class ResContainer extends Component {
                 secondary={secondaryText}>
               </ListItemText>
               <ListItemSecondaryAction>
-                <IconButton>
-                  <Edit />
-                </IconButton>
-                <IconButton aria-label="Delete" onClick={this.props.deleteBooking.bind(null, _id, location)}>
-                  <Delete />
-                </IconButton>
+                { ( this.props.loggedInfo.isAdmin || 
+                this.props.loggedInfo.user._id === createdBy ) ? 
+                  <IconButton>
+                    <Edit />
+                  </IconButton>
+                  : null }
+                { ( this.props.loggedInfo.isAdmin || 
+                this.props.loggedInfo.user._id === createdBy ) ? 
+                  <IconButton aria-label="Delete" onClick={this.props.deleteBooking.bind(null, _id, location)}>
+                    <Delete />
+                  </IconButton>
+                  : null}
               </ListItemSecondaryAction>
             </ListItem>
           </RouterLink>
