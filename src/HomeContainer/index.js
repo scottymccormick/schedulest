@@ -338,6 +338,11 @@ class HomeContainer extends Component {
       }
     })
   }
+  getResourceMap = (locations) => {
+    return locations.map((location) => {
+      return { resourceId: location._id, resourceTitle: location.name }
+    })
+  }
   componentDidMount = () => {
     if (!this.state.orgId) {
       console.log('component did mount home container')
@@ -433,6 +438,7 @@ class HomeContainer extends Component {
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
                 convertBookingsToEvents={this.convertBookingsToEvents}
+                getResourceMap={this.getResourceMap}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" render={

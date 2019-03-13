@@ -7,6 +7,7 @@ import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment';
 import BookingDialog from '../CreateBooking';
+import MultiLocCalendar from '../MultiLocCalendar';
 
 const localizer = BigCalendar.momentLocalizer(moment);
 
@@ -163,14 +164,18 @@ class ResContainer extends Component {
         <Paper className={classes.paperArea}>
           {this.state.showCalendar ?
             <div>
-              <BigCalendar
+              {/* <BigCalendar
               events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
               views={allViews}
               step={60}
               showMultiDayTimes
               defaultDate={new Date()}
               localizer={localizer}
-              className={classes.calendar} /> 
+              className={classes.calendar} />  */}
+              <MultiLocCalendar 
+                events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
+                resourceMap={this.props.locs ? this.props.getResourceMap(this.props.locs) : []}
+                />
             </div> : 
             <div>
               <List component="nav" dense>
