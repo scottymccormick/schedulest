@@ -26,7 +26,7 @@ class BookingDialog extends Component {
       price: 20.00,
       error: {
         startTime: '',
-        endTime: false,
+        endTime: '',
         date: false
       }
     }
@@ -64,7 +64,7 @@ class BookingDialog extends Component {
     this.validateStartTime()
     
     // validate endTime
-
+    this.validateEndTime()
     // if past 11:30pm
     // if (this.state.endTime < moment(this.state.date).hours(1).minutes(0).toDate()) {
     //   console.log('too early!')
@@ -116,12 +116,12 @@ class BookingDialog extends Component {
         newEndTime = moment(this.state.date).hour(23).minutes(30).toDate()
       } else {
         newStartTime = moment(this.state.date).hour(6).minutes(0).toDate()
-        newEndTime = moment(this.state.date).hour(6).minutes(30).toDate()
+        // newEndTime = moment(this.state.date).hour(6).minutes(30).toDate()
       }
       await this.setState({
         error,
         startTime: newStartTime,
-        endTime: newEndTime
+        endTime: newEndTime || this.state.endTime
       })
     } else {
       const error = {
@@ -132,21 +132,31 @@ class BookingDialog extends Component {
     }
   }
   validateEndTime = async () => {
-    const latestTime = moment(this.state.date).hours(23).minutes(0).toDate()
-    if (this.state.startTime >= latestTime ) {
+    const earliestTime = moment(this.state.date).hour(6).minutes(29).seconds(59)
+    const latestTime = moment(this.state.date).hour(23).minutes(31).seconds(0)
+    if (!moment(this.state.endTime).isBetween(earliestTime, latestTime)) {
       const error = {
         ...this.state.error,
-        startTime: 'Choose a start time on or before 11:00'
+        endTime: 'Choose an end time between 6:30 AM and 11:30 PM'
+      }
+      let newStartTime, newEndTime
+
+      if (moment(this.state.endTime) > latestTime.toDate()) {
+        // newStartTime = moment(this.state.date).hour(23).minutes(0).toDate()
+        newEndTime = moment(this.state.date).hour(23).minutes(30).toDate()
+      } else {
+        newStartTime = moment(this.state.date).hour(6).minutes(0).toDate()
+        newEndTime = moment(this.state.date).hour(6).minutes(30).toDate()
       }
       await this.setState({
         error,
-        startTime: moment(this.state.date).hours(23).minutes(0).toDate(),
-        endTime: moment(this.state.date).hours(23).minutes(30).toDate()
+        startTime: newStartTime || this.state.startTime,
+        endTime: newEndTime
       })
     } else {
       const error = {
         ...this.state.error,
-        startTime: ''
+        endTime: ''
       }
       await this.setState({ error })
     }
