@@ -11,6 +11,7 @@ import LocationsContainer from '../LocationsContainer';
 import BookingDetail from '../BookingDetail';
 import LocationDetail from '../LocationDetail';
 import UserDetail from '../UserDetail';
+import OrganizationDialog from '../OrganizationDialog';
 
 const drawerWidth = 240
 
@@ -81,10 +82,11 @@ class HomeContainer extends Component {
       orgId: '',
       users: [],
       locs: [],
-      bookings: []
+      bookings: [],
+      showOrgDialog: false
     }
   }
-  handleProfileMenu = e => {
+  handleMenuOpen = e => {
     this.setState({
       anchorEl: e.currentTarget
     })
@@ -342,6 +344,16 @@ class HomeContainer extends Component {
       return { resourceId: location._id, resourceTitle: location.name }
     })
   }
+  openOrgDialog = () => {
+    this.setState({
+      showOrgDialog: true
+    })
+  }
+  closeOrgDialog = () => {
+    this.setState({
+      showOrgDialog: false
+    })
+  }
   componentDidMount = () => {
     if (!this.state.orgId) {
       console.log('component did mount home container')
@@ -368,13 +380,10 @@ class HomeContainer extends Component {
                   <VerifiedUser /> <Typography color="inherit">Admin</Typography>
                 </IconButton>
                 : null}
-              <IconButton>
-                <SettingsIcon className={classes.toolbarIcon} />
-              </IconButton>
               <IconButton
                 aria-owns={open ? 'menu-appbar' : undefined}
                 aria-haspopup="true"
-                onClick={this.handleProfileMenu}
+                onClick={this.handleMenuOpen}
                 color="inherit"
               >
                 <PersonIcon />
@@ -394,6 +403,7 @@ class HomeContainer extends Component {
                 onClose={this.handleClose}
               >
                 <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem>
+                <MenuItem onClick={this.openOrgDialog}>Organzation</MenuItem>
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>
               
@@ -465,6 +475,12 @@ class HomeContainer extends Component {
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
           </Switch>
+          <OrganizationDialog 
+            open={this.state.showOrgDialog}
+            loggedInfo={this.props.loggedInfo}
+            orgId={this.state.orgId}
+            orgName={this.state.orgName}
+            onClose={this.closeOrgDialog} />
         </main>
       </div>
     )
