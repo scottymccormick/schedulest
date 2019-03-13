@@ -19,11 +19,11 @@ class BookingDialog extends Component {
       owner: '',
       title: '',
       location: '',
-      created_by: '',
+      createdBy: '',
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: 20.00,
+      price: '',
       error: {
         startTime: '',
         endTime: '',
@@ -163,14 +163,10 @@ class BookingDialog extends Component {
     const locBookings = dateBookings.filter(booking => 
       booking.location === this.state.location
     )
-    console.log('locBookings', locBookings)
     const currentStartTime = moment(this.state.startTime)
     const currentEndTime = moment(this.state.endTime)
     for (let i = 0; i < locBookings.length; i++) {
       const {startTime, endTime, location} = locBookings[i]
-      console.log('start time', startTime)
-      console.log('end time', endTime)
-      console.log('chosen time', currentStartTime)
 
       if (currentStartTime.isBetween(moment(startTime), moment(endTime), 'minutes') || 
         currentEndTime.isBetween(moment(startTime), moment(endTime), 'minutes')) {
@@ -196,14 +192,15 @@ class BookingDialog extends Component {
     }
     await this.setState({error})
   }
-  setPrice = async () => {
+  setPrice = async (specifiedPrice) => {
     const startTime = moment(this.state.startTime)
     const endTime = moment(this.state.endTime)
     const difference = endTime.diff(startTime, 'hours', true)
     const hourlyPrice = difference * this.props.loggedInfo.hourlyRate
-    const price = hourlyPrice < this.props.loggedInfo.dayRate ? hourlyPrice : this.props.loggedInfo.dayRate
+    const price = specifiedPrice || (
+      hourlyPrice < this.props.loggedInfo.dayRate ? hourlyPrice : this.props.loggedInfo.dayRate )
     this.setState({
-      price
+      price: price.toFixed(2)
     })
   }
   handleSubmit = async () => {
@@ -246,7 +243,7 @@ class BookingDialog extends Component {
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: 20.00,
+      price: this.props.loggedInfo.hourlyRate,
       error: {
         startTime: '',
         endTime: '',
@@ -278,7 +275,12 @@ class BookingDialog extends Component {
   componentDidMount = () => {
     if (!this.state.createdBy) {
       this.loadUser()
-      console.log('load user here')
+    }
+  }
+  componentDidUpdate(prevProps) {
+    // Set initial price once hourlyRate props are received.
+    if (prevProps.loggedInfo.hourlyRate !== this.props.loggedInfo.hourlyRate) {
+      this.setPrice(this.props.loggedInfo.hourlyRate)
     }
   }
   render() {
@@ -336,7 +338,7 @@ class BookingDialog extends Component {
             {/* Start Time */}
             <FormControl fullWidth >
               <MuiPickersUtilsProvider utils={MomentUtils}>
-              <TimePicker margin="dense"
+              <TimePicker margin="dense" required
                 error={Boolean(this.state.error.startTime)}
                 label="Start Time"
                 value={this.state.startTime}
@@ -353,7 +355,7 @@ class BookingDialog extends Component {
             {/* End Time */}
             <FormControl fullWidth>
               <MuiPickersUtilsProvider utils={MomentUtils}>
-              <TimePicker margin="dense"
+              <TimePicker margin="dense" required
                 error={Boolean(this.state.error.endTime)}
                 label="End Time"
                 value={this.state.endTime}

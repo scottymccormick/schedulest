@@ -177,8 +177,8 @@ class ResContainer extends Component {
           open={this.state.showBookingDialog} 
           onClose={this.closeBookingDialog}
           locs={this.props.locs}
-          users={this.props.users}
           loggedInfo={this.props.loggedInfo}
+          users={this.props.users}
           bookingsByDate={this.props.bookingsByDate}
           />
       </main>
