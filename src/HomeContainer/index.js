@@ -83,7 +83,12 @@ class HomeContainer extends Component {
       users: [],
       locs: [],
       bookings: [],
-      showOrgDialog: false
+      showOrgDialog: false,
+      orgToEdit: {
+        orgName: '',
+        hourlyRate: '',
+        dayRate: '',
+      }
     }
   }
   handleMenuOpen = e => {
@@ -301,7 +306,6 @@ class HomeContainer extends Component {
       })
       responseBody[location._id] = locBookings.sort(this.dateSort)
     }
-    console.log(responseBody)
     // keys are loc ids, values are arrays of bookings with same location
     return responseBody
   }
@@ -324,6 +328,7 @@ class HomeContainer extends Component {
     return location.name
   }
   getUserName = (userId) => {
+    if (!this.state.users) console.log(this.state)
     const user = this.state.users.find((user) => user._id === userId)
     return user.name
   }
@@ -345,14 +350,70 @@ class HomeContainer extends Component {
     })
   }
   openOrgDialog = () => {
+    const orgToEdit = {
+      orgName: this.state.orgName,
+      hourlyRate: Number(this.props.loggedInfo.hourlyRate).toFixed(2),
+      dayRate: Number(this.props.loggedInfo.dayRate).toFixed(2),
+    }
     this.setState({
-      showOrgDialog: true
+      showOrgDialog: true,
+      orgToEdit
     })
+  }
+  handleEditOrgChange = (name, value) => {
+    const orgToEdit = {
+      ...this.state.orgToEdit,
+      [name]: value
+    }
+    this.setState({orgToEdit})
   }
   closeOrgDialog = () => {
     this.setState({
       showOrgDialog: false
     })
+  }
+  handleEditOrgSubmit = async () => {
+    console.log('reaching submit')
+    try {
+      const { orgName, hourlyRate, dayRate } = this.state.orgToEdit
+      const requestBody = {
+        name: orgName,
+        hourlyRate,
+        dayRate
+      }
+      const token = localStorage.getItem('jwtToken')
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.state.orgId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!orgResponse.ok) {
+        throw Error(orgResponse.statusText)
+      }
+
+      const parsedResponse = await orgResponse.json()
+      const orgToEdit = {
+        orgName: '',
+        hourlyRate: '',
+        dayRate: ''
+      }
+      await this.setState({
+        orgToEdit,
+        orgName: parsedResponse.name,
+        showOrgDialog: false
+      })
+
+      // set new values in loggedInfo
+      this.props.setOrgValues(hourlyRate, dayRate)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
   componentDidMount = () => {
     if (!this.state.orgId) {
@@ -477,9 +538,10 @@ class HomeContainer extends Component {
           </Switch>
           <OrganizationDialog 
             open={this.state.showOrgDialog}
-            loggedInfo={this.props.loggedInfo}
+            handleChange={this.handleEditOrgChange}
+            handleSubmit={this.handleEditOrgSubmit}
             orgId={this.state.orgId}
-            orgName={this.state.orgName}
+            org={this.state.orgToEdit}
             onClose={this.closeOrgDialog} />
         </main>
       </div>

@@ -90,6 +90,12 @@ class App extends Component {
       console.log(error)
     }
   }
+  setOrgValues = (hourlyRate, dayRate) => {
+    this.setState({
+      hourlyRate,
+      dayRate
+    })
+  }
   componentDidMount = async () => {
     try {
       if (!this.state.logged) {
@@ -132,7 +138,7 @@ class App extends Component {
         <Typography variant="h3">Schedulest</Typography>
         <Route path="/" render={ props =>
           this.state.logged ?
-          <HomeContainer {...props} checkIfAdmin={this.checkIfAdmin} loggedInfo={this.state} handleLogout={this.handleLogout}/> :
+          <HomeContainer {...props} checkIfAdmin={this.checkIfAdmin} loggedInfo={this.state} setOrgValues={this.setOrgValues} handleLogout={this.handleLogout}/> :
           <LoginContainer {...props} handleLogin={this.handleLogin} />
           } />
       </div>
