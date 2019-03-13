@@ -226,9 +226,8 @@ class HomeContainer extends Component {
       bookings: newBookingsState.sort(this.dateSort)
     })
   }
-  deleteBooking = async (bookingId, locationId, e) => {
+  deleteBooking = async (bookingId, locationId) => {
     try {
-      e.preventDefault()
       const token = localStorage.getItem('jwtToken')
       const deleteResponse = await fetch(`http://localhost:9000/api/v1/bookings/${bookingId}`, {
         method: 'DELETE',

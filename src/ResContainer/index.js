@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton } from '@material-ui/core';
+import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton, Dialog } from '@material-ui/core';
 import { Add as AddIcon, Delete, Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment';
 import BookingDialog from '../CreateBooking';
+import DeleteBooking from '../DeleteBooking';
 import MultiLocCalendar from '../MultiLocCalendar';
 
 const localizer = BigCalendar.momentLocalizer(moment);
@@ -64,7 +65,12 @@ class ResContainer extends Component {
     this.state = {
       showCalendar: false,
       showBookingDialog: false,
-      bookingsByDate: null
+      showDeleteDialog: false,
+      bookingsByDate: null,
+      bookingToDelete: {
+        _id: '',
+        location: ''
+      }
     }
   }
   toggleCalendar = () => {
@@ -79,6 +85,34 @@ class ResContainer extends Component {
     if (newBooking) {
       this.props.addBooking(newBooking)
     }
+  }
+  handleDeleteClick = (_id, location, e) => {
+    e.preventDefault()
+    const bookingToDelete = {
+      _id,
+      location
+    }
+    this.setState({
+      showDeleteDialog: true,
+      bookingToDelete
+    })
+  }
+  closeDeleteDialog = e => {
+    if (e) e.preventDefault()
+    const bookingToDelete = {
+      _id: '',
+      location: ''
+    }
+    this.setState({
+      showDeleteDialog: false,
+      bookingToDelete
+    })
+  }
+  handleDeleteBooking = e => {
+    e.preventDefault()
+    const {_id, location} = this.state.bookingToDelete
+    this.props.deleteBooking(_id, location)
+    this.closeDeleteDialog()
   }
   getBookingListItem = (bookings, listItemClass) => {
     return (
@@ -102,9 +136,11 @@ class ResContainer extends Component {
                   : null }
                 { ( this.props.loggedInfo.isAdmin || 
                 this.props.loggedInfo.user._id === createdBy ) ? 
-                  <IconButton aria-label="Delete" onClick={this.props.deleteBooking.bind(null, _id, location)}>
-                    <Delete />
-                  </IconButton>
+                  <span>
+                    <IconButton aria-label="Delete" onClick={this.handleDeleteClick.bind(this, _id, location)}>
+                      <Delete />
+                    </IconButton>
+                  </span>
                   : null}
               </ListItemSecondaryAction>
             </ListItem>
@@ -192,6 +228,11 @@ class ResContainer extends Component {
           users={this.props.users}
           bookingsByDate={this.props.bookingsByDate}
           />
+        <DeleteBooking
+          open={this.state.showDeleteDialog}
+          bookingToDelete={this.state.bookingToDelete}
+          handleClose={this.closeDeleteDialog} 
+          confirmDelete={this.handleDeleteBooking}/>
       </main>
     )
   }
