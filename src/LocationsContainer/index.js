@@ -57,7 +57,7 @@ class LocationsContainer extends Component {
 
     const { classes } = this.props
     
-    const locationLis = this.props.locs.map(({name, description}, idx) => {
+    const locationLis = this.props.locs.map(({name, description, _id}, idx) => {
       return (
         <ListItem key={idx}>
           <ListItemText
@@ -65,7 +65,7 @@ class LocationsContainer extends Component {
             secondary={description}
             />
           <ListItemSecondaryAction>
-            <RouterLink to={`/locations/${idx}`} className={classes.navLink}>
+            <RouterLink to={`/locations/${_id}`} className={classes.navLink}>
               <Button className={classes.button} size="small" variant="contained" aria-label="Location Schedule">
               <DateRangeIcon />
                 Schedule
@@ -87,7 +87,7 @@ class LocationsContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
-            <List>
+            <List dense>
               {locationLis}
             </List>
         </Paper>

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
-import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon } from '@material-ui/icons';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon, VerifiedUser } from '@material-ui/icons';
+import moment from 'moment';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
 import LandingContainer from '../LandingContainer';
@@ -209,17 +210,20 @@ class HomeContainer extends Component {
     this.getOrgLocs()
     this.getOrgBookings()
   }
+  dateSort = (a, b) => {
+    if (a.date < b.date) return -1
+    if (a.date > b.date) return 1
+    return 0
+  }
+  timeSort = (a, b) => {
+    if (a.startTime < b.startTime) return -1
+    if (a.startTime > b.startTime) return 1
+    return 0
+  }
   addBooking = (newBooking) => {
-    const locIdx = this.state.bookings.findIndex((location) => {
-      return newBooking.location === location.info._id
-    })
-    const updatedLocation = [
-      ...this.state.bookings[locIdx].bookings, newBooking
-    ]
-    const newBookingsState = this.state.bookings
-    newBookingsState[locIdx].bookings = updatedLocation
+    const newBookingsState = [...this.state.bookings, newBooking]
     this.setState({
-      bookings: newBookingsState
+      bookings: newBookingsState.sort(this.dateSort)
     })
   }
   deleteBooking = async (bookingId, locationId, e) => {
@@ -238,32 +242,15 @@ class HomeContainer extends Component {
         throw Error(deleteResponse.statusText)
       }
 
-      console.log(deleteResponse)
-      // remove from state
-      const locIdx = this.state.bookings.findIndex((location) => {
-        return locationId === location.info._id
-      })
-      const updatedLocation = this.state.bookings[locIdx].bookings.filter(
-        (booking) => booking._id !== bookingId
-      )
-      const newBookingsState = this.state.bookings
-      newBookingsState[locIdx].bookings = updatedLocation
       this.setState({
-        bookings: newBookingsState
+        bookings: this.state.bookings.filter(b => b._id !== bookingId)
       })
-
-      // console.log(parsedResponse)
-      console.log(bookingId, locationId)
 
     } catch (error) {
       console.log(error)
     }
   }
   addLocation = async (locationData) => {
-    console.log(locationData)
-
-    
-    // post location to api
     try {
       const requestBody = {
         ...locationData,
@@ -295,12 +282,71 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
+  groupBookingsByLocation = () => {
+    const sortedLocs = this.state.locs
+    sortedLocs.sort((a, b) => {
+      const nameA = a.name.toLowerCase()
+      const nameB = b.name.toLowerCase()
+      if (nameA < nameB) return -1
+      if (nameA > nameB) return 1
+      return 0
+    })
+
+    const responseBody = {}
+    for (let i = 0; i < sortedLocs.length; i++) {
+      const location = sortedLocs[i];
+      const locBookings = this.state.bookings.filter((booking) => {
+        return booking.location === location._id
+      })
+      responseBody[location._id] = locBookings.sort(this.dateSort)
+    }
+    console.log(responseBody)
+    // keys are loc ids, values are arrays of bookings with same location
+    return responseBody
+  }
+  groupBookingsByDate = (bookings) => {
+    const dateBookingsMap = {}
+    const thisBookings = bookings || this.state.bookings
+
+    thisBookings.map(booking => {
+      const bookingDate = moment(booking.date).toDate().toDateString()
+      const existingArr = dateBookingsMap[bookingDate] || []
+      dateBookingsMap[bookingDate] = [...existingArr, booking]
+    })
+    for (let date in dateBookingsMap) {
+      dateBookingsMap[date] = dateBookingsMap[date].sort(this.timeSort)
+    }
+    return dateBookingsMap
+  }
+  getLocName = (locId) => {
+    const location = this.state.locs.find((loc) => loc._id === locId)
+    return location.name
+  }
+  getUserName = (userId) => {
+    const user = this.state.users.find((user) => user._id === userId)
+    return user.name
+  }
+  convertBookingsToEvents = (bookings) => {
+    return bookings.map((booking, idx) => {
+      return {
+        id: booking._id,
+        title: `${this.getUserName(booking.owner)} | ${this.getLocName(booking.location)}`,
+        allDay: false,
+        start: moment(booking.startTime).toDate(),
+        end: moment(booking.endTime).toDate(),
+        resourceId: booking.location,
+      }
+    })
+  }
+  componentDidMount = () => {
+    if (!this.state.orgId) {
+      console.log('component did mount home container')
+      this.getOrgValues()
+    }
+  }
   render() {
     const { classes } = this.props
     const open = Boolean(this.state.anchorEl)
-    if (!this.state.orgId) {
-      this.getOrgValues()
-    }
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -313,6 +359,11 @@ class HomeContainer extends Component {
             </RouterLink>
             <div className={classes.grow}></div>
             <div>
+              {this.props.loggedInfo.isAdmin ? 
+                <IconButton color="inherit">
+                  <VerifiedUser /> <Typography color="inherit">Admin</Typography>
+                </IconButton>
+                : null}
               <IconButton>
                 <SettingsIcon className={classes.toolbarIcon} />
               </IconButton>
@@ -373,8 +424,13 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 users={this.state.users}
                 bookings={this.state.bookings}
+                groupBookingsByLocation={this.groupBookingsByLocation}
+                bookingsByDate={this.groupBookingsByDate()}
+                getLocName={this.getLocName}
+                getUserName={this.getUserName}
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
+                convertBookingsToEvents={this.convertBookingsToEvents}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" render={
@@ -389,7 +445,16 @@ class HomeContainer extends Component {
                 locs={this.state.locs}
                 addLocation={this.addLocation} />
               } />
-            <Route exact path="/locations/:id" component={LocationDetail} />
+            <Route exact path="/locations/:id" render={
+              props => <LocationDetail {...props}
+                getUserName={this.getUserName}
+                locs={this.state.locs}
+                bookings={this.state.bookings}
+                users={this.state.users}
+                loggedInfo={this.props.loggedInfo}
+                groupBookingsByLocation={this.groupBookingsByLocation}
+                groupBookingsByDate={this.groupBookingsByDate} />
+              } />
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
           </Switch>

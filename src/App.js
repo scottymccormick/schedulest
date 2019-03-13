@@ -12,7 +12,8 @@ class App extends Component {
     this.state = {
       logged: false,
       user: null,
-      orgId: ''
+      orgId: '',
+      isAdmin: ''
     }
   }
   handleLogin = async (formData, e) => {
@@ -40,6 +41,9 @@ class App extends Component {
         user: parsedResponse.user,
         orgId: parsedResponse.user.organizations[0]
       })
+
+      this.checkIfAdmin(parsedResponse.user)
+
     } catch (error) {
       console.log(error)
     }
@@ -52,6 +56,33 @@ class App extends Component {
       user: null,
       orgId: ''
     })
+  }
+  checkIfAdmin = async ({_id, name, organizations}) => {
+    try {
+      const token = localStorage.getItem('jwtToken')
+      const orgId = organizations[0]
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${orgId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (!orgResponse.ok) {
+        throw Error(orgResponse.statusText)
+        // your token expired, please log in
+      }
+      
+      const parsedResponse = await orgResponse.json()
+
+      await this.setState({
+        isAdmin: parsedResponse.admins.indexOf(_id) > -1
+      })
+
+    } catch (error) {
+      console.log(error)
+    }
   }
   componentDidMount = async () => {
     try {
@@ -78,6 +109,8 @@ class App extends Component {
             user: parsedResponse.user,
             orgId: parsedResponse.user.organizations[0]
           })
+
+          this.checkIfAdmin(parsedResponse.user)
         }
       } else {
         console.log('component did mount is logged in')
@@ -93,7 +126,7 @@ class App extends Component {
         <Typography variant="h3">Schedulest</Typography>
         <Route path="/" render={ props =>
           this.state.logged ?
-          <HomeContainer {...props} loggedInfo={this.state} handleLogout={this.handleLogout}/> :
+          <HomeContainer {...props} checkIfAdmin={this.checkIfAdmin} loggedInfo={this.state} handleLogout={this.handleLogout}/> :
           <LoginContainer {...props} handleLogin={this.handleLogin} />
           } />
       </div>

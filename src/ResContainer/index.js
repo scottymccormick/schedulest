@@ -49,24 +49,6 @@ const styles = theme => ({
   }
 });
 
-// const events = [
-//   {
-//     id: 0,
-//     title: 'Trombone lesson',
-//     start: new Date(2019, 2, 7, 9, 0, 0),
-//     end: new Date(2019, 2, 7, 11, 0, 0),
-//     resourceId: 1,
-//   },
-//   {
-//     id: 1,
-//     title: 'Band practice',
-//     allDay: true,
-//     start: new Date(2019, 2, 8, 14, 0, 0),
-//     end: new Date(2019, 2, 8, 15, 0, 0),
-//     resourceId: 2,
-//   }
-// ]
-
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 // Create different calendars
@@ -80,7 +62,8 @@ class ResContainer extends Component {
 
     this.state = {
       showCalendar: false,
-      showBookingDialog: false
+      showBookingDialog: false,
+      bookingsByDate: null
     }
   }
   toggleCalendar = () => {
@@ -99,7 +82,7 @@ class ResContainer extends Component {
   getBookingListItem = (bookings, listItemClass) => {
     return (
       bookings.map(({_id, title, owner, date, startTime, endTime, location}) => {
-        const ownerName = (this.props.users.find((user) => user._id === owner)).name
+        const ownerName = this.props.getUserName(owner)
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
         return (
@@ -124,35 +107,24 @@ class ResContainer extends Component {
     )
   }
   generateEventList = (listItemClass) => {
-    return this.props.bookings.map((location, idx) => {
-      if (location.length === 0 ) return null
-      console.log('location', location)
-      return (
-        <div key={idx}>
-          <Typography variant="h6">
-            {location.info.name}
-          </Typography>
-          { this.getBookingListItem(location.bookings, listItemClass) }
-        </div>
-      ) 
-    })
-  }
-  convertBookingsToEvents = () => {
-    const events = []
-    console.log(this.props.bookings)
-    this.props.bookings.map(({info, bookings}, idx) => {
-      return bookings.map((booking) => {
-        return events.push({
-          id: booking._id,
-          title: this.props.users.find((user) => user._id === booking.owner).name,
-          allDay: false,
-          start: moment(booking.startTime).toDate(),
-          end: moment(booking.endTime).toDate(),
-          resourceId: info._id,
-        })
-      })
-    })
-    return events
+    const locBookingMap = this.props.groupBookingsByLocation()
+    const listSections = []
+
+    for (const location in locBookingMap) {
+      if (locBookingMap[location].length > 0) {
+        const locationName = this.props.getLocName(location)
+        const listSection = (
+          <div key={location}>
+            <Typography variant="h6">
+              {locationName}
+            </Typography>
+            {this.getBookingListItem(locBookingMap[location], listItemClass)}
+          </div>
+        )
+        listSections.push(listSection)
+      }
+    }
+    return listSections
   }
   componentDidMount() {
     if (this.props.location.state) {
@@ -164,7 +136,6 @@ class ResContainer extends Component {
   }
   render() {
     const { classes } = this.props
-    
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -184,7 +155,7 @@ class ResContainer extends Component {
           {this.state.showCalendar ?
             <div>
               <BigCalendar
-              events={this.props.bookings ? this.convertBookingsToEvents() : []}
+              events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
               views={allViews}
               step={60}
               showMultiDayTimes
@@ -193,7 +164,7 @@ class ResContainer extends Component {
               className={classes.calendar} /> 
             </div> : 
             <div>
-              <List component="nav">
+              <List component="nav" dense>
                 {this.props.bookings ? this.generateEventList(classes.listItem) : null}
               </List>
             </div>
@@ -205,6 +176,7 @@ class ResContainer extends Component {
           locs={this.props.locs}
           users={this.props.users}
           loggedInfo={this.props.loggedInfo}
+          bookingsByDate={this.props.bookingsByDate}
           />
       </main>
     )
