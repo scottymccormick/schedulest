@@ -12,7 +12,7 @@ const MultiLocCalendar = (props) => {
       events={props.events}
       localizer={localizer}
       defaultView={BigCalendar.Views.DAY}
-      views={['day', 'work_week']}
+      views={['day', 'week', 'agenda']}
       step={60}
       defaultDate={new Date()}
       resources={props.resourceMap}
@@ -22,13 +22,3 @@ const MultiLocCalendar = (props) => {
 }
 
 export default MultiLocCalendar
-
-// events={events}
-//       localizer={localizer}
-//       defaultView={BigCalendar.Views.DAY}
-//       views={['day', 'work_week']}
-//       step={60}
-//       defaultDate={new Date(2018, 0, 29)}
-//       resources={resourceMap}
-//       resourceIdAccessor="resourceId"
-//       resourceTitleAccessor="resourceTitle"
