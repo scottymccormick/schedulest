@@ -21,34 +21,40 @@ class BookingDialog extends Component {
       location: '',
       created_by: '',
       date: moment().toDate(),
-      startTime: moment().minutes(0).seconds(0).toDate(),
-      endTime: moment().add(1, 'h').minutes(0).seconds(0).toDate(),
+      startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
+      endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
       price: 20.00,
       error: {
         startTime: '',
         endTime: '',
-        date: false
+        overlap: ''
       }
     }
 
   }
-  handleChange = e => {
+  handleChange = async e => {
     console.log(e)
-    this.setState({
+    await this.setState({
       [e.target.name]: e.target.value
     })
 
+    this.checkOverlap()
     // validate
     // this.handleValidate()
   }
   handleDateChange = async (date) => {
     const start = moment(this.state.startTime)
     const end = moment(this.state.endTime)
+    const newStart = moment(date).hour(start.hour()).minute(start.minute())
+    const newEnd = moment(date).hour(end.hour()).minute(end.minute())
     await this.setState({
       date,
-      startTime: moment(date).hours(start.hours()).minutes(start.minutes()).toDate(),
-      endTime: moment(date).hours(end.hours()).minutes(end.minutes()).toDate(),
+      startTime: newStart,
+      endTime: newEnd
     })
+    console.log('new start', newStart)
+    console.log('new end', newEnd)
+    this.checkOverlap()
   }
   handleTimeChange = async (label, time) => {
     await this.setState({[label]: time.toDate()})
@@ -60,14 +66,13 @@ class BookingDialog extends Component {
     console.log(this.state)
     // validate date/time
 
-    // validate startTime
     this.validateStartTime()
-    
-    // validate endTime
     this.validateEndTime()
+    if (label) {
+      this.validateTimesAgainstOther(label)
+    }
 
-    // validate times against one another
-    this.validateTimesAgainstOther(label)
+    this.checkOverlap()
   }
   validateStartTime = async () => {
     const earliestTime = moment(this.state.date).hour(5).minutes(59).seconds(59)
@@ -146,6 +151,52 @@ class BookingDialog extends Component {
       })
     }
   }
+  checkOverlap = async () => {
+    if (!this.state.location) return
+
+    const currentDate = moment(this.state.date).toDate().toDateString()
+    const dateBookings = this.props.bookingsByDate[currentDate]
+
+    if (!dateBookings) {
+      this.clearOverlapError()
+      return
+    }
+    const locBookings = dateBookings.filter(booking => 
+      booking.location === this.state.location
+    )
+    console.log('locBookings', locBookings)
+    const currentStartTime = moment(this.state.startTime)
+    const currentEndTime = moment(this.state.endTime)
+    for (let i = 0; i < locBookings.length; i++) {
+      const {startTime, endTime, location} = locBookings[i]
+      console.log('start time', startTime)
+      console.log('end time', endTime)
+      console.log('chosen time', currentStartTime)
+
+      if (currentStartTime.isBetween(moment(startTime), moment(endTime)) || 
+        currentEndTime.isBetween(moment(startTime), moment(endTime))) {
+          const formattedStart = moment(startTime).format('LT')
+          const formattedEnd = moment(endTime).format('LT')
+          const locData = this.props.locs.find(loc => loc._id === location)
+          const locName = locData.name
+
+          const error = {
+            ...this.state.error,
+            overlap: `This booking overlaps with a ${formattedStart} - ${formattedEnd} in ${locName}`
+          }
+          await this.setState({error})
+          return
+      }
+    }
+    this.clearOverlapError()
+  }
+  clearOverlapError = async () => {
+    const error = {
+      ...this.state.error,
+      overlap: ''
+    }
+    await this.setState({error})
+  }
   handleSubmit = async () => {
     try {
       const token = localStorage.getItem('jwtToken')
@@ -201,7 +252,6 @@ class BookingDialog extends Component {
   }
   render() {
     // const { classes } = this.props
-    console.log(this.props)
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle>Create Booking</DialogTitle>
@@ -240,6 +290,11 @@ class BookingDialog extends Component {
               </Select>
             </FormControl>
             <FormControl fullWidth>
+              {Boolean(this.state.error.overlap) ? 
+                <FormHelperText error>
+                  {this.state.error.overlap}
+                </FormHelperText>
+                : null }
               <MuiPickersUtilsProvider utils={MomentUtils}>
                 <DatePicker margin="dense" required label="Date" name="date" 
                 error={this.state.error.date}
