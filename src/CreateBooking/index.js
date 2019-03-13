@@ -65,41 +65,9 @@ class BookingDialog extends Component {
     
     // validate endTime
     this.validateEndTime()
-    // if past 11:30pm
-    // if (this.state.endTime < moment(this.state.date).hours(1).minutes(0).toDate()) {
-    //   console.log('too early!')
-    //   const error = {
-    //     ...this.state.error,
-    //     endTime: true
-    //   }
-    //   this.setState({
-    //     error,
-    //     startTime: moment(this.state.endTime).subtract(30, 'm').toDate()
-    //   })
 
-    // // if start is before 11:30pm and end is after 1:00
-    // } else {
-    //   const error = {
-    //     ...this.state.error,
-    //     startTime: false,
-    //     endTime: false
-    //   }
-    //   this.setState({error})
-
-    //   // if start time past end time
-    //   if ((this.state.startTime >= this.state.endTime)) {
-    //     if (label === 'startTime') {
-
-    //       this.setState({
-    //         endTime: moment(this.state.startTime).add(1, 'h').toDate()
-    //       })
-    //     } else {
-    //       this.setState({
-    //         startTime: moment(this.state.endTime).subtract(1, 'h').toDate()
-    //       })
-    //     }
-    //   }
-    // }
+    // validate times against one another
+    this.validateTimesAgainstOther(label)
   }
   validateStartTime = async () => {
     const earliestTime = moment(this.state.date).hour(5).minutes(59).seconds(59)
@@ -159,6 +127,23 @@ class BookingDialog extends Component {
         endTime: ''
       }
       await this.setState({ error })
+    }
+  }
+  validateTimesAgainstOther = async (label) => {
+    if (!this.state.error.startTime && !this.state.error.endTime && 
+      moment(this.state.endTime).isSameOrBefore(moment(this.state.startTime))) {
+        
+      let newLabel, newTime = moment()
+      if (label === 'startTime') {
+        newTime = moment(this.state.startTime).add(30, 'm')
+        newLabel = 'endTime'
+      } else {
+        newTime = moment(this.state.endTime).subtract(30, 'm')
+        newLabel = 'startTime'
+      }      
+      await this.setState({
+        [newLabel]: newTime
+      })
     }
   }
   handleSubmit = async () => {
