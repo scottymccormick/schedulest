@@ -13,7 +13,10 @@ class App extends Component {
       logged: false,
       user: null,
       orgId: '',
-      isAdmin: ''
+      isAdmin: '',
+      hourlyRate: '',
+      dayRate: '',
+      cancelTime: ''
     }
   }
   handleLogin = async (formData, e) => {
@@ -77,7 +80,10 @@ class App extends Component {
       const parsedResponse = await orgResponse.json()
 
       await this.setState({
-        isAdmin: parsedResponse.admins.indexOf(_id) > -1
+        isAdmin: parsedResponse.admins.indexOf(_id) > -1,
+        hourlyRate: parsedResponse.hourlyRate,
+        dayRate: parsedResponse.dayRate,
+        cancelTime: parsedResponse.cancelTime
       })
 
     } catch (error) {
