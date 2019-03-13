@@ -25,7 +25,7 @@ class BookingDialog extends Component {
       endTime: moment().add(1, 'h').minutes(0).seconds(0).toDate(),
       price: 20.00,
       error: {
-        startTime: false,
+        startTime: '',
         endTime: false,
         date: false
       }
@@ -60,50 +60,95 @@ class BookingDialog extends Component {
     console.log(this.state)
     // validate date/time
 
-    // if past 11:30pm
-    if (this.state.startTime > moment(this.state.date).hours(23).minutes(30).toDate() ) {
-      console.log('too late!')
-      const error = {
-        ...this.state.error,
-        startTime: true
-      }
-      this.setState({
-        error,
-        endTime: moment(this.state.startTime).add(30, 'm').toDate()
-      })
-    } else if (this.state.endTime < moment(this.state.date).hours(1).minutes(0).toDate()) {
-      console.log('too early!')
-      const error = {
-        ...this.state.error,
-        endTime: true
-      }
-      this.setState({
-        error,
-        startTime: moment(this.state.endTime).subtract(30, 'm').toDate()
-      })
+    // validate startTime
+    this.validateStartTime()
+    
+    // validate endTime
 
-    // if start is before 11:30pm and end is after 1:00
+    // if past 11:30pm
+    // if (this.state.endTime < moment(this.state.date).hours(1).minutes(0).toDate()) {
+    //   console.log('too early!')
+    //   const error = {
+    //     ...this.state.error,
+    //     endTime: true
+    //   }
+    //   this.setState({
+    //     error,
+    //     startTime: moment(this.state.endTime).subtract(30, 'm').toDate()
+    //   })
+
+    // // if start is before 11:30pm and end is after 1:00
+    // } else {
+    //   const error = {
+    //     ...this.state.error,
+    //     startTime: false,
+    //     endTime: false
+    //   }
+    //   this.setState({error})
+
+    //   // if start time past end time
+    //   if ((this.state.startTime >= this.state.endTime)) {
+    //     if (label === 'startTime') {
+
+    //       this.setState({
+    //         endTime: moment(this.state.startTime).add(1, 'h').toDate()
+    //       })
+    //     } else {
+    //       this.setState({
+    //         startTime: moment(this.state.endTime).subtract(1, 'h').toDate()
+    //       })
+    //     }
+    //   }
+    // }
+  }
+  validateStartTime = async () => {
+    const earliestTime = moment(this.state.date).hour(5).minutes(59).seconds(59)
+    const latestTime = moment(this.state.date).hour(23).minutes(1).seconds(0)
+    if (!moment(this.state.startTime).isBetween(earliestTime, latestTime)) {
+      const error = {
+        ...this.state.error,
+        startTime: 'Choose a start time between 6:00 AM and 11:00 PM'
+      }
+      let newStartTime, newEndTime
+
+      if (moment(this.state.startTime) > latestTime.toDate()) {
+        newStartTime = moment(this.state.date).hour(23).minutes(0).toDate()
+        newEndTime = moment(this.state.date).hour(23).minutes(30).toDate()
+      } else {
+        newStartTime = moment(this.state.date).hour(6).minutes(0).toDate()
+        newEndTime = moment(this.state.date).hour(6).minutes(30).toDate()
+      }
+      await this.setState({
+        error,
+        startTime: newStartTime,
+        endTime: newEndTime
+      })
     } else {
       const error = {
         ...this.state.error,
-        startTime: false,
-        endTime: false
+        startTime: ''
       }
-      this.setState({error})
-
-      // if start time past end time
-      if ((this.state.startTime >= this.state.endTime)) {
-        if (label === 'startTime') {
-
-          this.setState({
-            endTime: moment(this.state.startTime).add(1, 'h').toDate()
-          })
-        } else {
-          this.setState({
-            startTime: moment(this.state.endTime).subtract(1, 'h').toDate()
-          })
-        }
+      await this.setState({ error })
+    }
+  }
+  validateEndTime = async () => {
+    const latestTime = moment(this.state.date).hours(23).minutes(0).toDate()
+    if (this.state.startTime >= latestTime ) {
+      const error = {
+        ...this.state.error,
+        startTime: 'Choose a start time on or before 11:00'
       }
+      await this.setState({
+        error,
+        startTime: moment(this.state.date).hours(23).minutes(0).toDate(),
+        endTime: moment(this.state.date).hours(23).minutes(30).toDate()
+      })
+    } else {
+      const error = {
+        ...this.state.error,
+        startTime: ''
+      }
+      await this.setState({ error })
     }
   }
   handleSubmit = async () => {
@@ -211,28 +256,35 @@ class BookingDialog extends Component {
             <FormControl fullWidth >
               <MuiPickersUtilsProvider utils={MomentUtils}>
               <TimePicker margin="dense"
-                error={this.state.error.startTime}
+                error={Boolean(this.state.error.startTime)}
                 label="Start Time"
                 value={this.state.startTime}
                 minutesStep={5}
                 onChange={this.handleTimeChange.bind(this, 'startTime')}
               />
               </MuiPickersUtilsProvider>
-              {/* <FormHelperText id="start-time-error" error>
-                this is the error text
-              </FormHelperText> */}
+              {this.state.error.startTime ? 
+                <FormHelperText error>
+                  {this.state.error.startTime}
+                </FormHelperText> : null
+              }
             </FormControl>
             {/* End Time */}
             <FormControl fullWidth>
               <MuiPickersUtilsProvider utils={MomentUtils}>
               <TimePicker margin="dense"
-                error={this.state.error.endTime}
+                error={Boolean(this.state.error.endTime)}
                 label="End Time"
                 value={this.state.endTime}
                 minutesStep={5}
                 onChange={this.handleTimeChange.bind(null, 'endTime')}
               />
               </MuiPickersUtilsProvider>
+              {this.state.error.endTime ? 
+                <FormHelperText error>
+                  {this.state.error.endTime}
+                </FormHelperText> : null
+              }
             </FormControl>
             {/* Price */}
             <FormControl fullWidth>
