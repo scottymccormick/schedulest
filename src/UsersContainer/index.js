@@ -56,13 +56,14 @@ class UsersContainer extends Component {
             primary={name}
           />
             <ListItemSecondaryAction>
-            {this.props.loggedInfo.isAdmin ? 
+            { this.props.loggedInfo.isAdmin ? 
               <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={this.handleEdit}>
                 <EditIcon />
                 Edit User
               </Button> : null }
               {console.log(_id)}
-            { (this.props.loggedInfo.isAdmin || this.props.loggedInfo.user._id === _id) ? 
+            { ( this.props.loggedInfo.isAdmin || 
+                this.props.loggedInfo.user._id === _id ) ? 
               <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={this.handlePrint} color="secondary">
                 <ReceiptIcon />
                 Print Report
@@ -79,9 +80,9 @@ class UsersContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2">
             Users
           </Typography>
-          <Fab color="primary" size="medium" aria-label="Add User" className={classes.fab}>
+          {/* <Fab color="primary" size="medium" aria-label="Add User" className={classes.fab}>
             <AddIcon />
-          </Fab>
+          </Fab> */}
         </div>
         <Paper className={classes.paperArea}>
           <List>

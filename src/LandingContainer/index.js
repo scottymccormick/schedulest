@@ -54,7 +54,12 @@ class LandingContainer extends Component{
             <Button size="large" variant="contained" color="primary">Create Booking</Button>
           </RouterLink>
           <Button size="large" variant="contained" color="secondary">Print Reports</Button>
-          <Button size="large" variant="contained" color="inherit">View Schedule</Button>
+          <RouterLink className={classes.navLink} to={{
+            pathname: '/bookings',
+            state: { showCalendar: true }}
+          }>
+            <Button size="large" variant="contained" color="inherit">View Schedule</Button>
+          </RouterLink>
         </Paper>
       </main>
     )

@@ -128,9 +128,12 @@ class ResContainer extends Component {
   }
   componentDidMount() {
     if (this.props.location.state) {
-      const { showBookingDialog } = this.props.location.state
+      const { showBookingDialog, showCalendar } = this.props.location.state
       if (showBookingDialog) {
         this.setState({showBookingDialog})
+      }
+      if (showCalendar) {
+        this.setState({showCalendar})
       }
     }
   }
