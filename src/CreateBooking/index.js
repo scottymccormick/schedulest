@@ -199,6 +199,7 @@ class BookingDialog extends Component {
   }
   handleSubmit = async () => {
     try {
+      if (this.state.error.overlap) throw Error({message: 'Cannot submit with any overlap'})
       const token = localStorage.getItem('jwtToken')
       const bookingResponse = await fetch('http://localhost:9000/api/v1/bookings', {
         method: 'POST',
@@ -223,6 +224,23 @@ class BookingDialog extends Component {
     } catch (error) {
       console.log(error)
     }
+  }
+  onClose = async () => {
+    await this.setState({
+      title: '',
+      location: '',
+      date: moment().toDate(),
+      startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
+      endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
+      price: 20.00,
+      error: {
+        startTime: '',
+        endTime: '',
+        overlap: ''
+      }
+    })
+    this.loadUser()
+    this.props.onClose()
   }
   loadUser = async () => {
     await this.setState({
@@ -349,7 +367,7 @@ class BookingDialog extends Component {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={this.props.onClose} color="default">
+          <Button variant="contained" onClick={this.onClose} color="default">
             Cancel
           </Button>
           <Button variant="contained" onClick={this.handleSubmit} color="primary">
