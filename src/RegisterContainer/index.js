@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link } from '@material-ui/core';
+import { withRouter } from 'react-router-dom';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
 
@@ -32,6 +33,10 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+  },
+  orStatement: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
   }
 });
 
@@ -87,10 +92,16 @@ class LoginContainer extends Component {
               Register
             </Button>
           </form>
+          <Typography variant="h6" className={classes.orStatement}>
+            or
+          </Typography>
+          <Button fullWidth color="secondary" variant="contained" onClick={() => this.props.history.push('/login')}>
+            Sign In
+          </Button>
         </Paper>
       </main>
     );
   }
 }
 
-export default withStyles(styles)(LoginContainer);
+export default withStyles(styles)(withRouter(LoginContainer));

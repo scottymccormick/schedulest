@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography } from '@material-ui/core';
+import { withRouter } from 'react-router-dom';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
 import googleLogin from '../images/google_login.png'
@@ -35,8 +36,8 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
   },
   orStatement: {
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit * 3
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
   }
 });
 
@@ -85,11 +86,9 @@ class LoginContainer extends Component {
           <Typography variant="h6" className={classes.orStatement}>
             or
           </Typography>
-          <Link href="/register">
-            <Button color="secondary" variant="contained" fullWidth>
-              Register
-            </Button>
-          </Link>
+          <Button fullWidth color="secondary" variant="contained" onClick={() => this.props.history.push('/register')}>
+            Register
+          </Button>
           {/* <Link href="/googleauth">
             <img src={googleLogin} alt="Sign In with Google" style={{width: '200px'}}/>
           </Link> */}
@@ -99,4 +98,4 @@ class LoginContainer extends Component {
   }
 }
 
-export default withStyles(styles)(LoginContainer);
+export default withStyles(styles)(withRouter(LoginContainer));
