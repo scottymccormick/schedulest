@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Typography } from '@material-ui/core';
-import { Route } from 'react-router-dom';
+import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import './App.css';
 import HomeContainer from './HomeContainer';
 import LoginContainer from './LoginContainer';
+import RegisterContainer from './RegisterContainer';
 
 class App extends Component {
   constructor() {
@@ -47,6 +48,8 @@ class App extends Component {
 
       this.checkIfAdmin(parsedResponse.user)
 
+      this.props.history.push('/')
+
     } catch (error) {
       console.log(error)
     }
@@ -59,6 +62,41 @@ class App extends Component {
       user: null,
       orgId: ''
     })
+  }
+  handleRegister = async (formData, e) => {
+    e.preventDefault()
+
+    try {
+      const registerResponse = await fetch('http://localhost:9000/api/v1/auth/register', {
+        method: 'POST',
+        // credentials: 'include',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!registerResponse.ok) {
+        throw Error(registerResponse.statusText)
+      }
+
+      const parsedResponse = await registerResponse.json()
+
+      localStorage.setItem('jwtToken', parsedResponse.token)
+      this.setState({
+        logged: true,
+        user: parsedResponse.user,
+        orgId: parsedResponse.user.organizations[0]
+      })
+
+      this.checkIfAdmin(parsedResponse.user)
+
+      this.props.history.push('/')
+
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
   checkIfAdmin = async ({_id, name, organizations}) => {
     try {
@@ -116,7 +154,7 @@ class App extends Component {
           
           const parsedResponse = await loginResponse.json()
           
-          this.setState({
+          await this.setState({
             logged: true,
             user: parsedResponse.user,
             orgId: parsedResponse.user.organizations[0]
@@ -133,17 +171,32 @@ class App extends Component {
     }
   }
   render() {
+    console.log(this.state)
     return (
       <div className="App">
         <Typography variant="h3">Schedulest</Typography>
-        <Route path="/" render={ props =>
-          this.state.logged ?
-          <HomeContainer {...props} checkIfAdmin={this.checkIfAdmin} loggedInfo={this.state} setOrgValues={this.setOrgValues} handleLogout={this.handleLogout}/> :
-          <LoginContainer {...props} handleLogin={this.handleLogin} />
+        <Switch>
+          <Route exact path="/login" render={
+            props => this.state.logged ? <Redirect to="/" /> :
+            <LoginContainer {...props} handleLogin={this.handleLogin} />
           } />
+          <Route exact path="/register" render={
+            props => <RegisterContainer {...props} handleRegister={this.handleRegister}/>
+          }/>
+          <Route path="/" render={ props =>
+          this.state.logged ?
+            <HomeContainer {...props} 
+              checkIfAdmin={this.checkIfAdmin} 
+              loggedInfo={this.state} 
+              setOrgValues={this.setOrgValues} 
+              handleLogout={this.handleLogout}/> :
+              
+              <Redirect to="/login" />
+          } />
+        </Switch>
       </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);

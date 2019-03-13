@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link } from '@material-ui/core';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
-import googleLogin from '../images/google_login.png'
 
 const styles = theme => ({
   main: {
@@ -33,17 +32,15 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
-  },
-  orStatement: {
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit * 3
   }
 });
 
 class LoginContainer extends Component {
   state = {
-    email: 'bobby@gmail.com',
-    password: 'my hashed password'
+    email: '',
+    name: '',
+    password: '',
+    organization: ''
   }
   handleChange = e => {
     this.setState({
@@ -60,16 +57,24 @@ class LoginContainer extends Component {
             <LockOutlined />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input id="email" name="email" autoComplete="email" value={this.state.email} onChange={this.handleChange} autoFocus />
+              <Input id="email" name="email" value={this.state.email} onChange={this.handleChange} autoFocus />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="name">Name</InputLabel>
+              <Input id="name" name="name" value={this.state.name} onChange={this.handleChange} />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
-              <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} autoComplete="current-password" />
+              <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="organization">Organization ID</InputLabel>
+              <Input name="organization" id="organization" value={this.state.organization} onChange={this.handleChange} />
             </FormControl>
             <Button
               type="submit"
@@ -77,22 +82,11 @@ class LoginContainer extends Component {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={this.props.handleLogin.bind(null, this.state)}
+              onClick={this.props.handleRegister.bind(null, this.state)}
               >
-              Sign in
-            </Button>
-          </form>
-          <Typography variant="h6" className={classes.orStatement}>
-            or
-          </Typography>
-          <Link href="/register">
-            <Button color="secondary" variant="contained" fullWidth>
               Register
             </Button>
-          </Link>
-          {/* <Link href="/googleauth">
-            <img src={googleLogin} alt="Sign In with Google" style={{width: '200px'}}/>
-          </Link> */}
+          </form>
         </Paper>
       </main>
     );
