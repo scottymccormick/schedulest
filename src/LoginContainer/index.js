@@ -89,9 +89,12 @@ class LoginContainer extends Component {
           <Typography variant="h6" className={classes.orStatement}>
             or
           </Typography>
-          <Link href="/googleauth">
+          <Button color="secondary" variant="contained" fullWidth>
+            Register
+          </Button>
+          {/* <Link href="/googleauth">
             <img src={googleLogin} alt="Sign In with Google" style={{width: '200px'}}/>
-          </Link>
+          </Link> */}
         </Paper>
       </main>
     );
