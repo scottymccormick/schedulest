@@ -282,34 +282,6 @@ class HomeContainer extends Component {
       console.log(error)
     }
   }
-  // callLocBookingsByDate = async (locId, start, end) => {
-  //   try {
-  //     const token = localStorage.getItem('jwtToken')
-  //     const startDate = start || moment().day(1).startOf('day').toString()
-  //     const endDate = end || moment().day(7).endOf('day').toString()
-  //     const urlString = `http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}&loc=${locId}&groupBy=date&from=${startDate}&to=${endDate}`
-  //     const bookingResponse = await fetch(urlString,
-  //       {
-  //         method: 'GET',
-  //         credentials: 'include',
-  //         headers: {
-  //           'Authorization': `Bearer ${token}`
-  //         }
-  //       }
-  //     )
-  //     if (!bookingResponse.ok) {
-  //       throw Error(bookingResponse.statusText)
-  //     }
-  //     const parsedResponse = await bookingResponse.json()
-  //     console.log(parsedResponse)
-  //     return parsedResponse
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-  // getLocBookingsByDate = async (locId, start, end) => {
-  //   return this.callLocBookingsByDate(locId, start, end)
-  // }
   groupBookingsByLocation = () => {
     const sortedLocs = this.state.locs
     sortedLocs.sort((a, b) => {
@@ -358,7 +330,7 @@ class HomeContainer extends Component {
     return bookings.map((booking, idx) => {
       return {
         id: booking._id,
-        title: this.getUserName(booking.owner),
+        title: `${this.getUserName(booking.owner)} | ${this.getLocName(booking.location)}`,
         allDay: false,
         start: moment(booking.startTime).toDate(),
         end: moment(booking.endTime).toDate(),
