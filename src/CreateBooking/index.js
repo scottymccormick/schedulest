@@ -37,6 +37,7 @@ class BookingDialog extends Component {
       [e.target.name]: e.target.value
     })
 
+    if (!this.state.price) this.setPrice()
     this.checkOverlap()
   }
   handleDateChange = async (date) => {
@@ -200,7 +201,7 @@ class BookingDialog extends Component {
     const price = specifiedPrice || (
       hourlyPrice < this.props.loggedInfo.dayRate ? hourlyPrice : this.props.loggedInfo.dayRate )
     this.setState({
-      price: price.toFixed(2)
+      price: Number(price).toFixed(2)
     })
   }
   handleSubmit = async () => {
@@ -243,7 +244,7 @@ class BookingDialog extends Component {
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: this.props.loggedInfo.hourlyRate.toFixed(2),
+      price: Number(this.props.loggedInfo.hourlyRate).toFixed(2),
       error: {
         startTime: '',
         endTime: '',
@@ -280,10 +281,10 @@ class BookingDialog extends Component {
   componentDidUpdate(prevProps, prevState) {
     // Set initial price once hourlyRate props are received.
     
-    if (this.props.loggedInfo.hourlyRate && !this.state.price) {
-      console.log('setting price')
-      this.setPrice(this.props.loggedInfo.hourlyRate)
-    }
+    // if (this.props.loggedInfo.hourlyRate && !this.state.price) {
+    //   console.log('setting price')
+    //   this.setPrice(this.props.loggedInfo.hourlyRate)
+    // }
   }
   render() {
     // const { classes } = this.props
