@@ -464,7 +464,9 @@ class HomeContainer extends Component {
                 open={open}
                 onClose={this.handleClose}
               >
+                {this.props.loggedInfo.isAdmin ? 
                 <MenuItem onClick={this.openOrgDialog}>Organzation</MenuItem>
+                : null }
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>
               
