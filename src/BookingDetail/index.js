@@ -87,7 +87,9 @@ class BookingDetail extends Component {
         {this.state.booking ? 
           <Paper className={classes.paperArea}>
             <Typography variant="h6">
-              {this.state.booking.ownerName}
+              <RouterLink to={`/users/${this.state.booking.owner}`}>
+                {this.state.booking.ownerName}
+              </RouterLink>
             </Typography>
             <Typography variant="body1" component="p" gutterBottom>
               {this.state.booking.locationName}

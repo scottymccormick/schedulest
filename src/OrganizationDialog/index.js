@@ -13,8 +13,7 @@ class OrganizationDialog extends Component {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Hourly Rate: The base rate at which bookings will cost hourly
-            Day Rate: The max amount that a booking will cost
+            Admin-only Details
           </DialogContentText>
           <form action="">
             <TextField fullWidth
@@ -45,6 +44,12 @@ class OrganizationDialog extends Component {
                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                 />
             </FormControl>
+            <TextField fullWidth margin="normal" 
+              label="Join Code" 
+              inputProps={{
+                readOnly: true,
+              }}
+              value={this.props.orgId} />
           </form>
         </DialogContent>
         <DialogActions>
