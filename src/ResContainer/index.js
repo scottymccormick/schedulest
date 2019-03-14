@@ -172,7 +172,6 @@ class ResContainer extends Component {
   }
   render() {
     const { classes } = this.props
-    console.log('res container rendered')
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>

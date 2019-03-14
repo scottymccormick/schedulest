@@ -70,7 +70,6 @@ class BookingDetail extends Component {
     if (!this.state.booking) {
       this.getBookingDetail(this.props.match.params.id)
     }
-    // console.log(bookingDetail)
     return (
       <main>
         <div className={classes.headerDiv}>

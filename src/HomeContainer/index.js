@@ -204,7 +204,6 @@ class HomeContainer extends Component {
       }
 
       const parsedResponse = await orgBookingsResponse.json()
-      console.log(parsedResponse)
 
       await this.setState({
         bookings: parsedResponse
@@ -330,7 +329,6 @@ class HomeContainer extends Component {
     return location.name
   }
   getUserName = (userId) => {
-    if (!this.state.users) console.log(this.state)
     const user = this.state.users.find((user) => user._id === userId)
     return user.name
   }
@@ -375,7 +373,6 @@ class HomeContainer extends Component {
     })
   }
   handleEditOrgSubmit = async () => {
-    console.log('reaching submit')
     try {
       const { orgName, hourlyRate, dayRate } = this.state.orgToEdit
       const requestBody = {

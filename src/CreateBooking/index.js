@@ -50,8 +50,6 @@ class BookingDialog extends Component {
       startTime: newStart,
       endTime: newEnd
     })
-    console.log('new start', newStart)
-    console.log('new end', newEnd)
     this.checkOverlap()
   }
   handleTimeChange = async (label, time) => {
@@ -62,8 +60,6 @@ class BookingDialog extends Component {
     this.setPrice()
   }
   handleTimeValidate = (label, time) => {
-    console.log('time validate handled')
-    console.log(this.state)
     // validate date/time
 
     this.validateStartTime()
@@ -233,8 +229,6 @@ class BookingDialog extends Component {
       }
 
       const parsedResponse = await bookingResponse.json()
-
-      console.log(parsedResponse)
 
       this.props.onClose(parsedResponse)
       this.clearState()
