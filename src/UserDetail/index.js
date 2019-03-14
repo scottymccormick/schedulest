@@ -27,7 +27,6 @@ const styles = theme => ({
 });
 
 const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users, history, bookings, locs, convertBookingsToEvents}) => {
-  console.log(match.params.id)
   const userBookings = !bookings ? [] : 
     bookings.filter(booking => {
       return booking.owner === match.params.id
@@ -42,7 +41,7 @@ const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users,
     return (locs.find(loc => loc._id === location)).name
   }
   const userEvents = !userBookings ? [] : 
-    ( bookings.map((booking, idx) => {
+    ( userBookings.map((booking, idx) => {
       return {
         selectable: true,
         id: booking._id,

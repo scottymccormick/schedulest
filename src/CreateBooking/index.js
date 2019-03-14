@@ -85,7 +85,6 @@ class BookingDialog extends Component {
         newEndTime = moment(this.state.date).hour(23).minutes(30).toDate()
       } else {
         newStartTime = moment(this.state.date).hour(6).minutes(0).toDate()
-        // newEndTime = moment(this.state.date).hour(6).minutes(30).toDate()
       }
       await this.setState({
         error,
@@ -111,7 +110,6 @@ class BookingDialog extends Component {
       let newStartTime, newEndTime
 
       if (moment(this.state.endTime) > latestTime.toDate()) {
-        // newStartTime = moment(this.state.date).hour(23).minutes(0).toDate()
         newEndTime = moment(this.state.date).hour(23).minutes(30).toDate()
       } else {
         newStartTime = moment(this.state.date).hour(6).minutes(0).toDate()
