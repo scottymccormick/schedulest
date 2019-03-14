@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, Route } from 'react-router-dom'
 import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
-import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon } from '@material-ui/icons';
+import { Receipt as ReceiptIcon, ArrowForwardIos } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
+import UserDetail from '../UserDetail';
 
 const styles = theme => ({
   root: {
@@ -50,24 +51,13 @@ class UsersContainer extends Component {
     const { classes } = this.props;
     const userLis = this.props.users.map(({name, _id}, idx) => {
       return (
-        <RouterLink key={idx} to={`/users/${_id}`} className={classes.routerLink}>
+        <RouterLink key={idx} to={`users/${_id}`} className={classes.routerLink}>
           <ListItem button>
             <ListItemText
             primary={name}
           />
             <ListItemSecondaryAction>
-            { this.props.loggedInfo.isAdmin ? 
-              <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={this.handleEdit}>
-                <EditIcon />
-                Edit User
-              </Button> : null }
-              {console.log(_id)}
-            { ( this.props.loggedInfo.isAdmin || 
-                this.props.loggedInfo.user._id === _id ) ? 
-              <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={this.handlePrint} color="secondary">
-                <ReceiptIcon />
-                Print Report
-              </Button> : null }
+              <ArrowForwardIos />
             </ListItemSecondaryAction>
           </ListItem>
         </RouterLink>
@@ -76,6 +66,13 @@ class UsersContainer extends Component {
 
     return (
       <main className={classes.root}>
+        <Route path={`/users/:id`} render={
+          props => <UserDetail {...props}
+            users={this.props.users}
+            loggedInfo={this.props.loggedInfo}
+            handlePrint={this.handlePrint}
+            handleEdit={this.handleEdit}
+            />} />
         <div className={classes.headerDiv}>
           <Typography variant="h4" gutterBottom component="h2">
             Users
@@ -97,6 +94,7 @@ class UsersContainer extends Component {
             </Button>
           </div> : null
         }
+        
       </main>
     )
   }

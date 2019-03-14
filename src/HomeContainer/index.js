@@ -10,7 +10,6 @@ import LandingContainer from '../LandingContainer';
 import LocationsContainer from '../LocationsContainer';
 import BookingDetail from '../BookingDetail';
 import LocationDetail from '../LocationDetail';
-import UserDetail from '../UserDetail';
 import OrganizationDialog from '../OrganizationDialog';
 
 const drawerWidth = 240
@@ -490,12 +489,11 @@ class HomeContainer extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/users" render={ 
+            <Route path="/users" render={ 
               props => <UsersContainer {...props} 
                 users={this.state.users}
                 loggedInfo={this.props.loggedInfo} />
               } />
-            <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" render={
               props => <ResContainer {...props} 
                 locs={this.state.locs}

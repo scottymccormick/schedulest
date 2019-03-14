@@ -190,7 +190,7 @@ class App extends Component {
               loggedInfo={this.state} 
               setOrgValues={this.setOrgValues} 
               handleLogout={this.handleLogout}/> :
-              
+
               <Redirect to="/login" />
           } />
         </Switch>

@@ -1,7 +1,7 @@
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Button } from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+import { Link as RouterLink, withRouter } from 'react-router-dom'
+import { Typography, Button, Paper, Dialog, DialogTitle, DialogContent } from '@material-ui/core'
+import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon, ArrowForwardIos, ArrowBackIos } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
@@ -24,10 +24,16 @@ const styles = theme => ({
   }
 });
 
-const UserDetail = ({match, classes}) => {
+const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users, history}) => {
   console.log(match.params.id)
   return (
-    <main className={classes.root}>
+    <Dialog open={true} onClose={() => history.push('/users')} className={classes.root}>
+      <DialogTitle>
+        {(users.find(user => user._id === match.params.id)).name}
+      </DialogTitle>
+      <DialogContent>
+
+      
       <div className={classes.headerDiv}>
         <RouterLink to="/users">
           <Button variant="contained" color="default" className={classes.headerButton}>
@@ -38,9 +44,24 @@ const UserDetail = ({match, classes}) => {
         <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
           User X
         </Typography>
+        <Paper className={classes.paperArea}>
+
+        { loggedInfo.isAdmin ? 
+              <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={handleEdit}>
+                <EditIcon />
+                Edit User
+              </Button> : null }
+            { ( loggedInfo.isAdmin || 
+                loggedInfo.user._id === match.params.id ) ? 
+              <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={handlePrint} color="secondary">
+                <ReceiptIcon />
+                Print Report
+              </Button> : null }
+        </Paper>
       </div>
-    </main>
+      </DialogContent>
+    </Dialog>
   )
 }
 
-export default withStyles(styles)(UserDetail)
+export default withStyles(styles)(withRouter(UserDetail))
