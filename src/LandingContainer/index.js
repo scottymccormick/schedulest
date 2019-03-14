@@ -39,8 +39,21 @@ class LandingContainer extends Component{
           Welcome
         </Typography>
         <Paper className={classes.paragraph}>
+          <Typography variant="h6" align="center">
+            Schedulest helps people reserve spaces, manage events, and collaborate flawlessly!
+          </Typography>
+          <hr />
           <Typography component="p">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut dolorem sit adipisci magnam ratione corporis magni dolores optio iste qui sequi, quam eveniet dicta molestias tempore? Obcaecati corrupti aliquid, dicta ducimus inventore suscipit iure assumenda, ratione numquam, hic eveniet! Sequi deleniti quibusdam id non quo optio, officiis aut consectetur, culpa qui, aliquid distinctio. Ipsa, cum ut eius illum nemo aliquid impedit in minus at, autem quasi provident optio asperiores dolorum, unde quod soluta labore corrupti tempora rem aperiam et vitae.
+            <Typography paragraph style={{display: 'inline-block'}}>
+            The booking tool is for use by a small business in scheduling and organizing the booking of multiple spaces.
+            </Typography>
+            <Typography paragraph style={{display: 'inline-block'}}>
+            Employees of the business (admins) should have control over all reservations made by any users. User will have the ability to create reservations and edit their own reservations. 
+            </Typography>
+            <Typography paragraph style={{display: 'inline-block'}}>
+            Both admins and users will have visibility into the cost of their individual reservations, as well as over a given month.
+            </Typography>
+
           </Typography>
         </Paper>
         <Typography variant="h4" gutterBottom className={classes.header}>
@@ -54,7 +67,12 @@ class LandingContainer extends Component{
             <Button size="large" variant="contained" color="primary">Create Booking</Button>
           </RouterLink>
           <Button size="large" variant="contained" color="secondary">Print Reports</Button>
-          <Button size="large" variant="contained" color="inherit">View Schedule</Button>
+          <RouterLink className={classes.navLink} to={{
+            pathname: '/bookings',
+            state: { showCalendar: true }}
+          }>
+            <Button size="large" variant="contained" color="inherit">View Schedule</Button>
+          </RouterLink>
         </Paper>
       </main>
     )

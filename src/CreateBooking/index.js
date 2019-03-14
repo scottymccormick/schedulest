@@ -19,11 +19,11 @@ class BookingDialog extends Component {
       owner: '',
       title: '',
       location: '',
-      created_by: '',
+      createdBy: '',
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: 20.00,
+      price: '',
       error: {
         startTime: '',
         endTime: '',
@@ -33,14 +33,12 @@ class BookingDialog extends Component {
 
   }
   handleChange = async e => {
-    console.log(e)
     await this.setState({
       [e.target.name]: e.target.value
     })
 
+    if (!this.state.price) this.setPrice()
     this.checkOverlap()
-    // validate
-    // this.handleValidate()
   }
   handleDateChange = async (date) => {
     const start = moment(this.state.startTime)
@@ -60,6 +58,8 @@ class BookingDialog extends Component {
     await this.setState({[label]: time.toDate()})
     // should validate to make it to time cannot be set to yesterday or tomorrow
     this.handleTimeValidate(label, time)
+
+    this.setPrice()
   }
   handleTimeValidate = (label, time) => {
     console.log('time validate handled')
@@ -164,17 +164,13 @@ class BookingDialog extends Component {
     const locBookings = dateBookings.filter(booking => 
       booking.location === this.state.location
     )
-    console.log('locBookings', locBookings)
     const currentStartTime = moment(this.state.startTime)
     const currentEndTime = moment(this.state.endTime)
     for (let i = 0; i < locBookings.length; i++) {
       const {startTime, endTime, location} = locBookings[i]
-      console.log('start time', startTime)
-      console.log('end time', endTime)
-      console.log('chosen time', currentStartTime)
 
-      if (currentStartTime.isBetween(moment(startTime), moment(endTime)) || 
-        currentEndTime.isBetween(moment(startTime), moment(endTime))) {
+      if (moment(startTime).isBetween(currentStartTime, currentEndTime, 'minutes') || 
+      moment(endTime).isBetween(currentStartTime, currentEndTime, 'minutes')) {
           const formattedStart = moment(startTime).format('LT')
           const formattedEnd = moment(endTime).format('LT')
           const locData = this.props.locs.find(loc => loc._id === location)
@@ -196,6 +192,17 @@ class BookingDialog extends Component {
       overlap: ''
     }
     await this.setState({error})
+  }
+  setPrice = async (specifiedPrice) => {
+    const startTime = moment(this.state.startTime)
+    const endTime = moment(this.state.endTime)
+    const difference = endTime.diff(startTime, 'hours', true)
+    const hourlyPrice = difference * this.props.loggedInfo.hourlyRate
+    const price = specifiedPrice || (
+      hourlyPrice < this.props.loggedInfo.dayRate ? hourlyPrice : this.props.loggedInfo.dayRate )
+    this.setState({
+      price: Number(price).toFixed(2)
+    })
   }
   handleSubmit = async () => {
     try {
@@ -220,19 +227,24 @@ class BookingDialog extends Component {
       console.log(parsedResponse)
 
       this.props.onClose(parsedResponse)
+      this.clearState()
 
     } catch (error) {
       console.log(error)
     }
   }
   onClose = async () => {
+    this.clearState()
+    this.props.onClose()
+  }
+  clearState = async () => {
     await this.setState({
       title: '',
       location: '',
       date: moment().toDate(),
       startTime: moment().hour(15).minutes(0).seconds(0).toDate(),
       endTime: moment().hour(16).minutes(0).seconds(0).toDate(),
-      price: 20.00,
+      price: Number(this.props.loggedInfo.hourlyRate).toFixed(2),
       error: {
         startTime: '',
         endTime: '',
@@ -240,7 +252,6 @@ class BookingDialog extends Component {
       }
     })
     this.loadUser()
-    this.props.onClose()
   }
   loadUser = async () => {
     await this.setState({
@@ -265,8 +276,15 @@ class BookingDialog extends Component {
   componentDidMount = () => {
     if (!this.state.createdBy) {
       this.loadUser()
-      console.log('load user here')
     }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    // Set initial price once hourlyRate props are received.
+    
+    // if (this.props.loggedInfo.hourlyRate && !this.state.price) {
+    //   console.log('setting price')
+    //   this.setPrice(this.props.loggedInfo.hourlyRate)
+    // }
   }
   render() {
     // const { classes } = this.props
@@ -323,7 +341,7 @@ class BookingDialog extends Component {
             {/* Start Time */}
             <FormControl fullWidth >
               <MuiPickersUtilsProvider utils={MomentUtils}>
-              <TimePicker margin="dense"
+              <TimePicker margin="dense" required
                 error={Boolean(this.state.error.startTime)}
                 label="Start Time"
                 value={this.state.startTime}
@@ -340,7 +358,7 @@ class BookingDialog extends Component {
             {/* End Time */}
             <FormControl fullWidth>
               <MuiPickersUtilsProvider utils={MomentUtils}>
-              <TimePicker margin="dense"
+              <TimePicker margin="dense" required
                 error={Boolean(this.state.error.endTime)}
                 label="End Time"
                 value={this.state.endTime}

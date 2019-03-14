@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
-import { DateRange as DateRangeIcon, Add as AddIcon } from '@material-ui/icons';
+import { Typography, Paper, List, ListItem, ListItemText, Fab } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import LocationForm from '../CreateLocation';
 
@@ -31,6 +31,10 @@ const styles = theme => ({
   navLink: {
     textDecoration: 'none',
     color: 'inherit'
+  },
+  listItemPadding: {
+    paddingBottom: theme.spacing.unit,
+    paddingTop: theme.spacing.unit
   }
 })
 
@@ -46,10 +50,6 @@ class LocationsContainer extends Component {
   }
   handleSubmit = (location) => {
     this.props.addLocation(location)
-    // this.setState({
-    //   locations: [location, ...this.state.locations]
-    // })
-    // send to upper component
 
     this.handleLocationClose()
   }
@@ -59,20 +59,14 @@ class LocationsContainer extends Component {
     
     const locationLis = this.props.locs.map(({name, description, _id}, idx) => {
       return (
-        <ListItem key={idx}>
-          <ListItemText
-            primary={name}
-            secondary={description}
-            />
-          <ListItemSecondaryAction>
-            <RouterLink to={`/locations/${_id}`} className={classes.navLink}>
-              <Button className={classes.button} size="small" variant="contained" aria-label="Location Schedule">
-              <DateRangeIcon />
-                Schedule
-              </Button>
-            </RouterLink>
-          </ListItemSecondaryAction>
-        </ListItem>
+        <RouterLink to={`/locations/${_id}`} key={idx} className={classes.navLink}>
+          <ListItem button  >
+            <ListItemText
+              primary={name}
+              secondary={description}
+              />
+          </ListItem>
+        </RouterLink>
       )
     })
     
@@ -87,7 +81,7 @@ class LocationsContainer extends Component {
           </Fab>
         </div>
         <Paper className={classes.paperArea}>
-            <List dense>
+            <List>
               {locationLis}
             </List>
         </Paper>

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
-import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon } from '@material-ui/icons';
+import { Link as RouterLink, Route } from 'react-router-dom'
+import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import { Receipt as ReceiptIcon, ArrowForwardIos } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
+import UserDetail from '../UserDetail';
 
 const styles = theme => ({
   root: {
@@ -37,6 +38,7 @@ const styles = theme => ({
 })
 
 class UsersContainer extends Component {
+
   handleEdit = e => {
     e.preventDefault()
     console.log('edit user')
@@ -50,20 +52,13 @@ class UsersContainer extends Component {
     const { classes } = this.props;
     const userLis = this.props.users.map(({name, _id}, idx) => {
       return (
-        <RouterLink key={idx} to={`/users/${_id}`} className={classes.routerLink}>
+        <RouterLink key={idx} to={`users/${_id}`} className={classes.routerLink}>
           <ListItem button>
             <ListItemText
             primary={name}
           />
             <ListItemSecondaryAction>
-              <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={this.handleEdit}>
-                <EditIcon />
-                Edit User
-              </Button>
-              <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={this.handlePrint} color="secondary">
-                <ReceiptIcon />
-                Print Report
-              </Button>
+              <ArrowForwardIos />
             </ListItemSecondaryAction>
           </ListItem>
         </RouterLink>
@@ -72,25 +67,34 @@ class UsersContainer extends Component {
 
     return (
       <main className={classes.root}>
+        <Route path={`/users/:id`} render={
+          props => <UserDetail {...props}
+            bookings={this.props.bookings}
+            locs={this.props.locs}
+            convertBookingsToEvents={this.props.convertBookingsToEvents}
+            users={this.props.users}
+            loggedInfo={this.props.loggedInfo}
+            handlePrint={this.handlePrint}
+            handleEdit={this.handleEdit}
+            />} />
         <div className={classes.headerDiv}>
           <Typography variant="h4" gutterBottom component="h2">
             Users
           </Typography>
-          <Fab color="primary" size="medium" aria-label="Add User" className={classes.fab}>
-            <AddIcon />
-          </Fab>
         </div>
         <Paper className={classes.paperArea}>
           <List>
             {userLis}
           </List>
         </Paper>
-        <div className={classes.footerActions}>
-          <Button className={classes.button} size="medium" color="secondary" light="true" variant="contained" aria-label="Report" onClick={() => console.log('print report')}>
-            <ReceiptIcon />
-            Print All Reports
-          </Button>
-        </div>
+        {this.props.loggedInfo.isAdmin ? 
+          <div className={classes.footerActions}>
+            <Button className={classes.button} size="medium" color="secondary" light="true" variant="contained" aria-label="Report" onClick={() => console.log('print report')}>
+              <ReceiptIcon />
+              Print All Reports
+            </Button>
+          </div> : null
+        }
       </main>
     )
   }

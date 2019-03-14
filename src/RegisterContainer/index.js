@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, FormControl, Input, InputLabel, Paper, Typography } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Input, InputLabel, Paper, Typography, FormLabel, RadioGroup, Radio } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -42,12 +42,21 @@ const styles = theme => ({
 
 class LoginContainer extends Component {
   state = {
-    email: 'bobby@gmail.com',
-    password: 'my hashed password'
+    email: '',
+    name: '',
+    password: '',
+    orgId: '',
+    orgType: 'existing',
+    orgName: ''
   }
   handleChange = e => {
     this.setState({
       [e.target.name]: e.target.value
+    })
+  }
+  radioChange = e => {
+    this.setState({
+      orgType: e.target.value
     })
   }
   render() {
@@ -60,37 +69,62 @@ class LoginContainer extends Component {
             <LockOutlined />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input id="email" name="email" autoComplete="email" value={this.state.email} onChange={this.handleChange} autoFocus />
+              <Input id="email" name="email" value={this.state.email} onChange={this.handleChange} autoFocus />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="name">Name</InputLabel>
+              <Input id="name" name="name" value={this.state.name} onChange={this.handleChange} />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
-              <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} autoComplete="current-password" />
+              <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} />
             </FormControl>
+            {this.state.orgType === 'existing' ? 
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="orgId">Organization ID</InputLabel>
+                <Input name="orgId" id="orgId" value={this.state.orgId} onChange={this.handleChange} />
+              </FormControl>
+              : 
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="orgName">Organization Name</InputLabel>
+                <Input name="orgName" id="orgName" value={this.state.orgName} onChange={this.handleChange} />
+              </FormControl>
+              }
+            <FormControl margin="normal" component="fieldset">
+              <FormLabel>My Organization is</FormLabel>
+              <RadioGroup row
+                aria-label="Organization"
+                name="organizationType"
+                value={this.state.orgType}
+                onChange={this.radioChange}
+              >
+                <FormControlLabel value="existing" control={<Radio />} label="Existing" />
+                <FormControlLabel value="new" control={<Radio />} label="New" />
+              </RadioGroup>
+            </FormControl>
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={this.props.handleLogin.bind(null, this.state)}
+              onClick={this.props.handleRegister.bind(null, this.state)}
               >
-              Sign in
+              Register
             </Button>
           </form>
           <Typography variant="h6" className={classes.orStatement}>
             or
           </Typography>
-          <Button fullWidth color="secondary" variant="contained" onClick={() => this.props.history.push('/register')}>
-            Register
+          <Button fullWidth color="secondary" variant="contained" onClick={() => this.props.history.push('/login')}>
+            Sign In
           </Button>
-          {/* <Link href="/googleauth">
-            <img src={googleLogin} alt="Sign In with Google" style={{width: '200px'}}/>
-          </Link> */}
         </Paper>
       </main>
     );

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
-import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon, VerifiedUser } from '@material-ui/icons';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, VerifiedUser } from '@material-ui/icons';
 import moment from 'moment';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
@@ -10,7 +10,7 @@ import LandingContainer from '../LandingContainer';
 import LocationsContainer from '../LocationsContainer';
 import BookingDetail from '../BookingDetail';
 import LocationDetail from '../LocationDetail';
-import UserDetail from '../UserDetail';
+import OrganizationDialog from '../OrganizationDialog';
 
 const drawerWidth = 240
 
@@ -43,7 +43,10 @@ const styles = theme => ({
     textDecoration: 'none',
     color: 'inherit'
   },
-  toolbarSpacer: theme.mixins.toolbar
+  toolbarSpacer: theme.mixins.toolbar,
+  headerName: {
+    marginRight: theme.spacing.unit
+  }
 })
 
 const sidebarNavs = [
@@ -81,10 +84,16 @@ class HomeContainer extends Component {
       orgId: '',
       users: [],
       locs: [],
-      bookings: []
+      bookings: [],
+      showOrgDialog: false,
+      orgToEdit: {
+        orgName: '',
+        hourlyRate: '',
+        dayRate: '',
+      }
     }
   }
-  handleProfileMenu = e => {
+  handleMenuOpen = e => {
     this.setState({
       anchorEl: e.currentTarget
     })
@@ -226,9 +235,8 @@ class HomeContainer extends Component {
       bookings: newBookingsState.sort(this.dateSort)
     })
   }
-  deleteBooking = async (bookingId, locationId, e) => {
+  deleteBooking = async (bookingId, locationId) => {
     try {
-      e.preventDefault()
       const token = localStorage.getItem('jwtToken')
       const deleteResponse = await fetch(`http://localhost:9000/api/v1/bookings/${bookingId}`, {
         method: 'DELETE',
@@ -300,7 +308,6 @@ class HomeContainer extends Component {
       })
       responseBody[location._id] = locBookings.sort(this.dateSort)
     }
-    console.log(responseBody)
     // keys are loc ids, values are arrays of bookings with same location
     return responseBody
   }
@@ -311,7 +318,7 @@ class HomeContainer extends Component {
     thisBookings.map(booking => {
       const bookingDate = moment(booking.date).toDate().toDateString()
       const existingArr = dateBookingsMap[bookingDate] || []
-      dateBookingsMap[bookingDate] = [...existingArr, booking]
+      return dateBookingsMap[bookingDate] = [...existingArr, booking]
     })
     for (let date in dateBookingsMap) {
       dateBookingsMap[date] = dateBookingsMap[date].sort(this.timeSort)
@@ -323,6 +330,7 @@ class HomeContainer extends Component {
     return location.name
   }
   getUserName = (userId) => {
+    if (!this.state.users) console.log(this.state)
     const user = this.state.users.find((user) => user._id === userId)
     return user.name
   }
@@ -337,6 +345,77 @@ class HomeContainer extends Component {
         resourceId: booking.location,
       }
     })
+  }
+  getResourceMap = (locations) => {
+    return locations.map((location) => {
+      return { resourceId: location._id, resourceTitle: location.name }
+    })
+  }
+  openOrgDialog = () => {
+    const orgToEdit = {
+      orgName: this.state.orgName,
+      hourlyRate: Number(this.props.loggedInfo.hourlyRate).toFixed(2),
+      dayRate: Number(this.props.loggedInfo.dayRate).toFixed(2),
+    }
+    this.setState({
+      showOrgDialog: true,
+      orgToEdit
+    })
+  }
+  handleEditOrgChange = (name, value) => {
+    const orgToEdit = {
+      ...this.state.orgToEdit,
+      [name]: value
+    }
+    this.setState({orgToEdit})
+  }
+  closeOrgDialog = () => {
+    this.setState({
+      showOrgDialog: false
+    })
+  }
+  handleEditOrgSubmit = async () => {
+    console.log('reaching submit')
+    try {
+      const { orgName, hourlyRate, dayRate } = this.state.orgToEdit
+      const requestBody = {
+        name: orgName,
+        hourlyRate,
+        dayRate
+      }
+      const token = localStorage.getItem('jwtToken')
+      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.state.orgId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!orgResponse.ok) {
+        throw Error(orgResponse.statusText)
+      }
+
+      const parsedResponse = await orgResponse.json()
+      const orgToEdit = {
+        orgName: '',
+        hourlyRate: '',
+        dayRate: ''
+      }
+      await this.setState({
+        orgToEdit,
+        orgName: parsedResponse.name,
+        showOrgDialog: false
+      })
+
+      // set new values in loggedInfo
+      this.props.setOrgValues(hourlyRate, dayRate)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
   componentDidMount = () => {
     if (!this.state.orgId) {
@@ -364,15 +443,15 @@ class HomeContainer extends Component {
                   <VerifiedUser /> <Typography color="inherit">Admin</Typography>
                 </IconButton>
                 : null}
-              <IconButton>
-                <SettingsIcon className={classes.toolbarIcon} />
-              </IconButton>
               <IconButton
                 aria-owns={open ? 'menu-appbar' : undefined}
                 aria-haspopup="true"
-                onClick={this.handleProfileMenu}
+                onClick={this.handleMenuOpen}
                 color="inherit"
-              >
+                >
+                <Typography className={classes.headerName} variant="h6" color="inherit">
+                  {this.props.loggedInfo.user.name}
+                </Typography>
                 <PersonIcon />
               </IconButton>
               <Menu
@@ -389,7 +468,8 @@ class HomeContainer extends Component {
                 open={open}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem>
+                {/* <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem> */}
+                <MenuItem onClick={this.openOrgDialog}>Organzation</MenuItem>
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>
               
@@ -415,10 +495,14 @@ class HomeContainer extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/users" render={ 
-              props => <UsersContainer {...props} users={this.state.users} />
+            <Route path="/users" render={ 
+              props => <UsersContainer {...props} 
+                users={this.state.users}
+                bookings={this.state.bookings}
+                locs={this.state.locs}
+                convertBookingsToEvents={this.convertBookingsToEvents}
+                loggedInfo={this.props.loggedInfo} />
               } />
-            <Route exact path="/users/:id" component={UserDetail} />
             <Route exact path="/bookings" render={
               props => <ResContainer {...props} 
                 locs={this.state.locs}
@@ -431,6 +515,7 @@ class HomeContainer extends Component {
                 addBooking={this.addBooking}
                 deleteBooking={this.deleteBooking}
                 convertBookingsToEvents={this.convertBookingsToEvents}
+                getResourceMap={this.getResourceMap}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings/:id" render={
@@ -458,6 +543,13 @@ class HomeContainer extends Component {
             <Route exact path="/" component={LandingContainer} />
             <Route component={page404} />
           </Switch>
+          <OrganizationDialog 
+            open={this.state.showOrgDialog}
+            handleChange={this.handleEditOrgChange}
+            handleSubmit={this.handleEditOrgSubmit}
+            orgId={this.state.orgId}
+            org={this.state.orgToEdit}
+            onClose={this.closeOrgDialog} />
         </main>
       </div>
     )

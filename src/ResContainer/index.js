@@ -3,12 +3,11 @@ import { Link as RouterLink } from 'react-router-dom'
 import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton } from '@material-ui/core';
 import { Add as AddIcon, Delete, Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import BigCalendar from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment';
 import BookingDialog from '../CreateBooking';
+import DeleteBooking from '../DeleteBooking';
+import MultiLocCalendar from '../MultiLocCalendar';
 
-const localizer = BigCalendar.momentLocalizer(moment);
 
 const styles = theme => ({
   root: {
@@ -49,13 +48,6 @@ const styles = theme => ({
   }
 });
 
-let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-
-// Create different calendars
-// Day views with resource mapping
-// Week view for single resource
-// Need to be able to view 
-
 class ResContainer extends Component {
   constructor() {
     super();
@@ -63,7 +55,12 @@ class ResContainer extends Component {
     this.state = {
       showCalendar: false,
       showBookingDialog: false,
-      bookingsByDate: null
+      showDeleteDialog: false,
+      bookingsByDate: null,
+      bookingToDelete: {
+        _id: '',
+        location: ''
+      }
     }
   }
   toggleCalendar = () => {
@@ -79,9 +76,37 @@ class ResContainer extends Component {
       this.props.addBooking(newBooking)
     }
   }
+  handleDeleteClick = (_id, location, e) => {
+    e.preventDefault()
+    const bookingToDelete = {
+      _id,
+      location
+    }
+    this.setState({
+      showDeleteDialog: true,
+      bookingToDelete
+    })
+  }
+  closeDeleteDialog = e => {
+    if (e) e.preventDefault()
+    const bookingToDelete = {
+      _id: '',
+      location: ''
+    }
+    this.setState({
+      showDeleteDialog: false,
+      bookingToDelete
+    })
+  }
+  handleDeleteBooking = e => {
+    e.preventDefault()
+    const {_id, location} = this.state.bookingToDelete
+    this.props.deleteBooking(_id, location)
+    this.closeDeleteDialog()
+  }
   getBookingListItem = (bookings, listItemClass) => {
     return (
-      bookings.map(({_id, title, owner, date, startTime, endTime, location}) => {
+      bookings.map(({_id, title, owner, date, startTime, endTime, location, createdBy}) => {
         const ownerName = this.props.getUserName(owner)
         const primaryText = `${ownerName} ${title ? `(${title})` : ''} - ${moment(date).format('LL')}`
         const secondaryText = `${moment(startTime).format('LT')} - ${moment(endTime).format('LT')}`
@@ -93,12 +118,20 @@ class ResContainer extends Component {
                 secondary={secondaryText}>
               </ListItemText>
               <ListItemSecondaryAction>
-                <IconButton>
-                  <Edit />
-                </IconButton>
-                <IconButton aria-label="Delete" onClick={this.props.deleteBooking.bind(null, _id, location)}>
-                  <Delete />
-                </IconButton>
+                { ( this.props.loggedInfo.isAdmin || 
+                this.props.loggedInfo.user._id === createdBy ) ? 
+                  <IconButton>
+                    <Edit />
+                  </IconButton>
+                  : null }
+                { ( this.props.loggedInfo.isAdmin || 
+                this.props.loggedInfo.user._id === createdBy ) ? 
+                  <span>
+                    <IconButton aria-label="Delete" onClick={this.handleDeleteClick.bind(this, _id, location)}>
+                      <Delete />
+                    </IconButton>
+                  </span>
+                  : null}
               </ListItemSecondaryAction>
             </ListItem>
           </RouterLink>
@@ -128,14 +161,18 @@ class ResContainer extends Component {
   }
   componentDidMount() {
     if (this.props.location.state) {
-      const { showBookingDialog } = this.props.location.state
+      const { showBookingDialog, showCalendar } = this.props.location.state
       if (showBookingDialog) {
         this.setState({showBookingDialog})
+      }
+      if (showCalendar) {
+        this.setState({showCalendar})
       }
     }
   }
   render() {
     const { classes } = this.props
+    console.log('res container rendered')
     return (
       <main className={classes.root}>
         <div className={classes.headerDiv}>
@@ -154,18 +191,14 @@ class ResContainer extends Component {
         <Paper className={classes.paperArea}>
           {this.state.showCalendar ?
             <div>
-              <BigCalendar
-              events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
-              views={allViews}
-              step={60}
-              showMultiDayTimes
-              defaultDate={new Date()}
-              localizer={localizer}
-              className={classes.calendar} /> 
+              <MultiLocCalendar 
+                events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
+                resourceMap={this.props.locs ? this.props.getResourceMap(this.props.locs) : []}
+                />
             </div> : 
             <div>
               <List component="nav" dense>
-                {this.props.bookings ? this.generateEventList(classes.listItem) : null}
+                {(this.props.bookings && this.props.users) ? this.generateEventList(classes.listItem) : null}
               </List>
             </div>
           }
@@ -174,10 +207,15 @@ class ResContainer extends Component {
           open={this.state.showBookingDialog} 
           onClose={this.closeBookingDialog}
           locs={this.props.locs}
-          users={this.props.users}
           loggedInfo={this.props.loggedInfo}
+          users={this.props.users}
           bookingsByDate={this.props.bookingsByDate}
           />
+        <DeleteBooking
+          open={this.state.showDeleteDialog}
+          bookingToDelete={this.state.bookingToDelete}
+          handleClose={this.closeDeleteDialog} 
+          confirmDelete={this.handleDeleteBooking}/>
       </main>
     )
   }
