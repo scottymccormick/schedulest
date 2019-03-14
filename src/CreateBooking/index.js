@@ -176,6 +176,10 @@ class BookingDialog extends Component {
         currentStartTime.isBetween(moment(startTime), moment(endTime), 'minutes')
         ||
         currentEndTime.isBetween(moment(startTime), moment(endTime), 'minutes')
+        ||
+        currentStartTime.isSame(moment(startTime), 'minutes') 
+        ||
+        currentEndTime.isSame(moment(endTime), 'minutes')
         ) {
           const formattedStart = moment(startTime).format('LT')
           const formattedEnd = moment(endTime).format('LT')
