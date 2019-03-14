@@ -492,6 +492,9 @@ class HomeContainer extends Component {
             <Route path="/users" render={ 
               props => <UsersContainer {...props} 
                 users={this.state.users}
+                bookings={this.state.bookings}
+                locs={this.state.locs}
+                convertBookingsToEvents={this.convertBookingsToEvents}
                 loggedInfo={this.props.loggedInfo} />
               } />
             <Route exact path="/bookings" render={

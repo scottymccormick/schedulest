@@ -38,6 +38,7 @@ const styles = theme => ({
 })
 
 class UsersContainer extends Component {
+
   handleEdit = e => {
     e.preventDefault()
     console.log('edit user')
@@ -68,6 +69,9 @@ class UsersContainer extends Component {
       <main className={classes.root}>
         <Route path={`/users/:id`} render={
           props => <UserDetail {...props}
+            bookings={this.props.bookings}
+            locs={this.props.locs}
+            convertBookingsToEvents={this.props.convertBookingsToEvents}
             users={this.props.users}
             loggedInfo={this.props.loggedInfo}
             handlePrint={this.handlePrint}

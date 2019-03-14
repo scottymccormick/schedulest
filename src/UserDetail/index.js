@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link as RouterLink, withRouter } from 'react-router-dom'
-import { Typography, Button, Paper, Dialog, DialogTitle, DialogContent } from '@material-ui/core'
+import { Typography, Button, Paper, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
 import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon, ArrowForwardIos, ArrowBackIos } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles'
+import UserCalendar from '../UserCalendar';
+import moment from 'moment'
 
 const styles = theme => ({
   root: {
@@ -24,42 +26,62 @@ const styles = theme => ({
   }
 });
 
-const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users, history}) => {
+const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users, history, bookings, locs, convertBookingsToEvents}) => {
   console.log(match.params.id)
+  const userBookings = !bookings ? [] : 
+    bookings.filter(booking => {
+      return booking.owner === match.params.id
+    })
+  const handleSelect = e => {
+    console.log(e)
+  }
+  const getUserName = () => {
+    return (users.find(user => user._id === match.params.id)).name
+  }
+  const getLocName = (location) => {
+    return (locs.find(loc => loc._id === location)).name
+  }
+  const userEvents = !userBookings ? [] : 
+    ( bookings.map((booking, idx) => {
+      return {
+        selectable: true,
+        id: booking._id,
+        title: `${getUserName(booking.owner)} | ${getLocName(booking.location)}`,
+        allDay: false,
+        start: moment(booking.startTime).toDate(),
+        end: moment(booking.endTime).toDate(),
+        resourceId: booking.location,
+        onSelectEvent: {handleSelect},
+        // onSelectEvent={event => alert(event.title)}
+        //   onSelectSlot={this.handleSelect}
+      }
+    }))
+  
   return (
-    <Dialog open={true} onClose={() => history.push('/users')} className={classes.root}>
+    <Dialog fullWidth maxWidth="xl" open={true} onClose={() => history.push('/users')} className={classes.root}>
       <DialogTitle>
-        {(users.find(user => user._id === match.params.id)).name}
+        {getUserName()}
       </DialogTitle>
       <DialogContent>
-
-      
-      <div className={classes.headerDiv}>
-        <RouterLink to="/users">
-          <Button variant="contained" color="default" className={classes.headerButton}>
-            <ArrowBackIos size="small" />
-            Users
-          </Button>
-        </RouterLink>
-        <Typography variant="h4" gutterBottom component="h2" className={classes.headerDiv}>
-          User X
-        </Typography>
         <Paper className={classes.paperArea}>
-
-        { loggedInfo.isAdmin ? 
-              <Button className={classes.button} size="small" variant="contained" aria-label="Edit User" onClick={handleEdit}>
-                <EditIcon />
-                Edit User
-              </Button> : null }
-            { ( loggedInfo.isAdmin || 
-                loggedInfo.user._id === match.params.id ) ? 
-              <Button className={classes.button} size="small" variant="contained" aria-label="Print Report" onClick={handlePrint} color="secondary">
-                <ReceiptIcon />
-                Print Report
-              </Button> : null }
+          <UserCalendar 
+            events={userEvents}/>
+            
         </Paper>
-      </div>
       </DialogContent>
+      <DialogActions>
+        { loggedInfo.isAdmin ? 
+          <Button className={classes.button} size="medium" variant="contained" aria-label="Edit User" onClick={handleEdit}>
+            <EditIcon />
+            Edit User
+          </Button> : null }
+        { ( loggedInfo.isAdmin || 
+            loggedInfo.user._id === match.params.id ) ? 
+          <Button className={classes.button} size="medium" variant="contained" aria-label="Print Report" onClick={handlePrint} color="secondary">
+            <ReceiptIcon />
+            Print Report
+          </Button> : null }
+      </DialogActions>
     </Dialog>
   )
 }
