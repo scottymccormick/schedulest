@@ -24,7 +24,7 @@ class App extends Component {
     e.preventDefault()
 
     try {
-      const loginResponse = await fetch('http://localhost:9000/api/v1/auth/login', {
+      const loginResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -77,7 +77,7 @@ class App extends Component {
       } else {
         requestBody.orgName = formData.orgName
       }
-      const registerResponse = await fetch('http://localhost:9000/api/v1/auth/register', {
+      const registerResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/auth/register`, {
         method: 'POST',
         // credentials: 'include',
         headers: {
@@ -112,7 +112,7 @@ class App extends Component {
     try {
       const token = localStorage.getItem('jwtToken')
       const orgId = organizations[0]
-      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${orgId}`, {
+      const orgResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/orgs/${orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -149,7 +149,7 @@ class App extends Component {
       if (!this.state.logged) {
         const token = localStorage.getItem('jwtToken')
         if (token) {
-          const loginResponse = await fetch('http://localhost:9000/api/v1/users/test', {
+          const loginResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/users/test`, {
             method: 'GET',
             credentials: 'include',
             headers: {

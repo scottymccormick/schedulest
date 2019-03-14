@@ -208,7 +208,7 @@ class BookingDialog extends Component {
     try {
       if (this.state.error.overlap) throw Error({message: 'Cannot submit with any overlap'})
       const token = localStorage.getItem('jwtToken')
-      const bookingResponse = await fetch('http://localhost:9000/api/v1/bookings', {
+      const bookingResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/bookings`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -277,14 +277,6 @@ class BookingDialog extends Component {
     if (!this.state.createdBy) {
       this.loadUser()
     }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    // Set initial price once hourlyRate props are received.
-    
-    // if (this.props.loggedInfo.hourlyRate && !this.state.price) {
-    //   console.log('setting price')
-    //   this.setPrice(this.props.loggedInfo.hourlyRate)
-    // }
   }
   render() {
     // const { classes } = this.props

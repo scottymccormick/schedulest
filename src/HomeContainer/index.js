@@ -107,7 +107,7 @@ class HomeContainer extends Component {
     try {
       // fetch first organization for now
       const token = localStorage.getItem('jwtToken')
-      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.props.loggedInfo.orgId}`, {
+      const orgResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/orgs/${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -133,7 +133,7 @@ class HomeContainer extends Component {
   getOrgUsers = async () => {
     try {
       const token = localStorage.getItem('jwtToken')
-      const orgUsersResponse = await fetch(`http://localhost:9000/api/v1/users?org=${this.props.loggedInfo.orgId}`, {
+      const orgUsersResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/users?org=${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -162,7 +162,7 @@ class HomeContainer extends Component {
   getOrgLocs = async () => {
     try {
       const token = localStorage.getItem('jwtToken')
-      const orgLocsResponse = await fetch(`http://localhost:9000/api/v1/locs?org=${this.props.loggedInfo.orgId}`, {
+      const orgLocsResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/locs?org=${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -191,7 +191,7 @@ class HomeContainer extends Component {
   getOrgBookings = async () => {
     try {
       const token = localStorage.getItem('jwtToken')
-      const orgBookingsResponse = await fetch(`http://localhost:9000/api/v1/bookings?org=${this.props.loggedInfo.orgId}`, {
+      const orgBookingsResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/bookings?org=${this.props.loggedInfo.orgId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -238,7 +238,7 @@ class HomeContainer extends Component {
   deleteBooking = async (bookingId, locationId) => {
     try {
       const token = localStorage.getItem('jwtToken')
-      const deleteResponse = await fetch(`http://localhost:9000/api/v1/bookings/${bookingId}`, {
+      const deleteResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/bookings/${bookingId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -265,7 +265,7 @@ class HomeContainer extends Component {
         organization: this.state.orgId
       }
       const token = localStorage.getItem('jwtToken')
-      const locResponse = await fetch(`http://localhost:9000/api/v1/locs`, {
+      const locResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/locs`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -384,7 +384,7 @@ class HomeContainer extends Component {
         dayRate
       }
       const token = localStorage.getItem('jwtToken')
-      const orgResponse = await fetch(`http://localhost:9000/api/v1/orgs/${this.state.orgId}`, {
+      const orgResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/orgs/${this.state.orgId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -419,7 +419,6 @@ class HomeContainer extends Component {
   }
   componentDidMount = () => {
     if (!this.state.orgId) {
-      console.log('component did mount home container')
       this.getOrgValues()
     }
   }
@@ -468,7 +467,6 @@ class HomeContainer extends Component {
                 open={open}
                 onClose={this.handleClose}
               >
-                {/* <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem> */}
                 <MenuItem onClick={this.openOrgDialog}>Organzation</MenuItem>
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>

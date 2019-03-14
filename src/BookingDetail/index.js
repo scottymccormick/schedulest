@@ -32,7 +32,7 @@ class BookingDetail extends Component {
   getBookingDetail = async (id) => {
     try {
       const token = localStorage.getItem('jwtToken')
-      const bookingResponse = await fetch(`http://localhost:9000/api/v1/bookings/${id}`, {
+      const bookingResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/bookings/${id}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
