@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink as RouterLink } from 'react-router-dom';
 import { Typography, CssBaseline, AppBar, Drawer, withStyles, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton, Menu, MenuItem } from '@material-ui/core';
-import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, Settings as SettingsIcon, VerifiedUser } from '@material-ui/icons';
+import { Event as EventIcon, People as PeopleIcon, Room as RoomIcon, Person as PersonIcon, VerifiedUser } from '@material-ui/icons';
 import moment from 'moment';
 import UsersContainer from '../UsersContainer';
 import ResContainer from '../ResContainer';
@@ -43,7 +43,10 @@ const styles = theme => ({
     textDecoration: 'none',
     color: 'inherit'
   },
-  toolbarSpacer: theme.mixins.toolbar
+  toolbarSpacer: theme.mixins.toolbar,
+  headerName: {
+    marginRight: theme.spacing.unit
+  }
 })
 
 const sidebarNavs = [
@@ -315,7 +318,7 @@ class HomeContainer extends Component {
     thisBookings.map(booking => {
       const bookingDate = moment(booking.date).toDate().toDateString()
       const existingArr = dateBookingsMap[bookingDate] || []
-      dateBookingsMap[bookingDate] = [...existingArr, booking]
+      return dateBookingsMap[bookingDate] = [...existingArr, booking]
     })
     for (let date in dateBookingsMap) {
       dateBookingsMap[date] = dateBookingsMap[date].sort(this.timeSort)
@@ -445,7 +448,10 @@ class HomeContainer extends Component {
                 aria-haspopup="true"
                 onClick={this.handleMenuOpen}
                 color="inherit"
-              >
+                >
+                <Typography className={classes.headerName} variant="h6" color="inherit">
+                  {this.props.loggedInfo.user.name}
+                </Typography>
                 <PersonIcon />
               </IconButton>
               <Menu
@@ -462,7 +468,7 @@ class HomeContainer extends Component {
                 open={open}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem>
+                {/* <MenuItem onClick={this.handleClose}>{this.props.loggedInfo.user.name}</MenuItem> */}
                 <MenuItem onClick={this.openOrgDialog}>Organzation</MenuItem>
                 <MenuItem onClick={this.props.handleLogout}>Log Out</MenuItem>
               </Menu>

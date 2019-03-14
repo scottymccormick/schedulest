@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, FormControl, Input, InputLabel, Paper, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
-import googleLogin from '../images/google_login.png'
 
 const styles = theme => ({
   main: {

@@ -1,7 +1,7 @@
 import React from 'react'
-import { Link as RouterLink, withRouter } from 'react-router-dom'
-import { Typography, Button, Paper, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
-import { Edit as EditIcon, Receipt as ReceiptIcon, Add as AddIcon, ArrowForwardIos, ArrowBackIos } from '@material-ui/icons';
+import { withRouter } from 'react-router-dom'
+import { Button, Paper, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
+import { Edit as EditIcon, Receipt as ReceiptIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles'
 import UserCalendar from '../UserCalendar';
 import moment from 'moment'
@@ -51,9 +51,7 @@ const UserDetail = ({match, classes, loggedInfo, handleEdit, handlePrint, users,
         start: moment(booking.startTime).toDate(),
         end: moment(booking.endTime).toDate(),
         resourceId: booking.location,
-        onSelectEvent: {handleSelect},
-        // onSelectEvent={event => alert(event.title)}
-        //   onSelectSlot={this.handleSelect}
+        onSelectEvent: {handleSelect}
       }
     }))
   

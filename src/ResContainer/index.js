@@ -1,16 +1,13 @@
 import React, { Component } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton, Dialog } from '@material-ui/core';
+import { Typography, Paper, List, ListItem, Button, ListItemText, Fab, ListItemSecondaryAction, IconButton } from '@material-ui/core';
 import { Add as AddIcon, Delete, Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import BigCalendar from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment';
 import BookingDialog from '../CreateBooking';
 import DeleteBooking from '../DeleteBooking';
 import MultiLocCalendar from '../MultiLocCalendar';
 
-const localizer = BigCalendar.momentLocalizer(moment);
 
 const styles = theme => ({
   root: {
@@ -50,13 +47,6 @@ const styles = theme => ({
     color: 'inherit'
   }
 });
-
-let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-
-// Create different calendars
-// Day views with resource mapping
-// Week view for single resource
-// Need to be able to view 
 
 class ResContainer extends Component {
   constructor() {
@@ -201,14 +191,6 @@ class ResContainer extends Component {
         <Paper className={classes.paperArea}>
           {this.state.showCalendar ?
             <div>
-              {/* <BigCalendar
-              events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
-              views={allViews}
-              step={60}
-              showMultiDayTimes
-              defaultDate={new Date()}
-              localizer={localizer}
-              className={classes.calendar} />  */}
               <MultiLocCalendar 
                 events={this.props.bookings ? this.props.convertBookingsToEvents(this.props.bookings) : []}
                 resourceMap={this.props.locs ? this.props.getResourceMap(this.props.locs) : []}

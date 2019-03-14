@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -12,7 +12,7 @@ const MultiLocCalendar = (props) => {
       events={props.events}
       localizer={localizer}
       defaultView={BigCalendar.Views.DAY}
-      views={['day', 'week', 'agenda']}
+      views={['day', 'agenda']}
       step={60}
       defaultDate={new Date()}
       resources={props.resourceMap}

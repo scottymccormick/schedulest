@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link as RouterLink, Route } from 'react-router-dom'
-import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText, Fab } from '@material-ui/core';
+import { Typography, Paper, List, ListItem, Button, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import { Receipt as ReceiptIcon, ArrowForwardIos } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import UserDetail from '../UserDetail';
@@ -81,9 +81,6 @@ class UsersContainer extends Component {
           <Typography variant="h4" gutterBottom component="h2">
             Users
           </Typography>
-          {/* <Fab color="primary" size="medium" aria-label="Add User" className={classes.fab}>
-            <AddIcon />
-          </Fab> */}
         </div>
         <Paper className={classes.paperArea}>
           <List>
@@ -98,7 +95,6 @@ class UsersContainer extends Component {
             </Button>
           </div> : null
         }
-        
       </main>
     )
   }
