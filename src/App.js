@@ -171,16 +171,13 @@ class App extends Component {
 
           this.checkIfAdmin(parsedResponse.user)
         }
-      } else {
-        console.log('component did mount is logged in')
-      }
+      } 
 
     } catch (error) {
       console.log(error)
     }
   }
   render() {
-    console.log(this.state)
     return (
       <div className="App">
         <Typography variant="h3">Schedulest</Typography>
