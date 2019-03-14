@@ -67,13 +67,23 @@ class App extends Component {
     e.preventDefault()
 
     try {
+      let requestBody = {
+        email: formData.email,
+        name: formData.name,
+        password: formData.password
+      }
+      if (formData.orgId) {
+        requestBody.orgId = formData.orgId
+      } else {
+        requestBody.orgName = formData.orgName
+      }
       const registerResponse = await fetch('http://localhost:9000/api/v1/auth/register', {
         method: 'POST',
         // credentials: 'include',
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(requestBody)
       })
 
       if (!registerResponse.ok) {

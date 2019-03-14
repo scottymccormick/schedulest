@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link } from '@material-ui/core';
+import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography, Link, FormLabel, RadioGroup, Radio } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { LockOutlined } from '@material-ui/icons'
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -45,11 +45,18 @@ class LoginContainer extends Component {
     email: '',
     name: '',
     password: '',
-    organization: ''
+    orgId: '',
+    orgType: 'existing',
+    orgName: ''
   }
   handleChange = e => {
     this.setState({
       [e.target.name]: e.target.value
+    })
+  }
+  radioChange = e => {
+    this.setState({
+      orgType: e.target.value
     })
   }
   render() {
@@ -77,10 +84,30 @@ class LoginContainer extends Component {
               <InputLabel htmlFor="password">Password</InputLabel>
               <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange} />
             </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="organization">Organization ID</InputLabel>
-              <Input name="organization" id="organization" value={this.state.organization} onChange={this.handleChange} />
+            {this.state.orgType === 'existing' ? 
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="orgId">Organization ID</InputLabel>
+                <Input name="orgId" id="orgId" value={this.state.orgId} onChange={this.handleChange} />
+              </FormControl>
+              : 
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="orgName">Organization Name</InputLabel>
+                <Input name="orgName" id="orgName" value={this.state.orgName} onChange={this.handleChange} />
+              </FormControl>
+              }
+            <FormControl margin="normal" component="fieldset">
+              <FormLabel>My Organization is</FormLabel>
+              <RadioGroup row
+                aria-label="Organization"
+                name="organizationType"
+                value={this.state.orgType}
+                onChange={this.radioChange}
+              >
+                <FormControlLabel value="existing" control={<Radio />} label="Existing" />
+                <FormControlLabel value="new" control={<Radio />} label="New" />
+              </RadioGroup>
             </FormControl>
+            
             <Button
               type="submit"
               fullWidth
