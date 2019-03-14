@@ -79,7 +79,6 @@ class App extends Component {
       }
       const registerResponse = await fetch(`${process.env.REACT_APP_API}/api/v1/auth/register`, {
         method: 'POST',
-        // credentials: 'include',
         headers: {
           "Content-Type": "application/json"
         },
