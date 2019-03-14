@@ -169,8 +169,14 @@ class BookingDialog extends Component {
     for (let i = 0; i < locBookings.length; i++) {
       const {startTime, endTime, location} = locBookings[i]
 
-      if (moment(startTime).isBetween(currentStartTime, currentEndTime, 'minutes') || 
-      moment(endTime).isBetween(currentStartTime, currentEndTime, 'minutes')) {
+      if (
+        moment(startTime).isBetween(currentStartTime, currentEndTime, 'minutes')|| 
+        moment(endTime).isBetween(currentStartTime, currentEndTime, 'minutes')
+        ||
+        currentStartTime.isBetween(moment(startTime), moment(endTime), 'minutes')
+        ||
+        currentEndTime.isBetween(moment(startTime), moment(endTime), 'minutes')
+        ) {
           const formattedStart = moment(startTime).format('LT')
           const formattedEnd = moment(endTime).format('LT')
           const locData = this.props.locs.find(loc => loc._id === location)
